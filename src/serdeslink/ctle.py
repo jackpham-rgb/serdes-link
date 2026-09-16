@@ -2,9 +2,10 @@
 
     H(jf) = A_dc * (1 + jf/fz) / ((1 + jf/fp1) * (1 + jf/fp2))
 
-Exposed knobs are DC gain and the zero/pole placement; peaking is a *result*
-of that placement, reported by `peaking_db`, not force-fit to a target (over-
-peaking has a real, honest cost — see the sweep in scripts/sweep_ctle.py).
+Exposed knobs are DC gain and the zero/pole placement. Peaking is a *result*
+of that placement, reported by `peaking_db`, not force-fit to a target.
+Over-peaking has a real, honest cost; see the sweep in
+scripts/sweep_ctle.py.
 """
 from __future__ import annotations
 

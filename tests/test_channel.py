@@ -35,9 +35,9 @@ def _make_two_uncoupled_lines_s4p(tmp_path, length_m=0.05):
 
 def test_sdd21_matches_single_ended_line(tmp_path):
     """For two IDENTICAL, UNCOUPLED single-ended lines, the differential
-    transfer function SDD21 must equal the single line's S21 — this is a
-    white-box check that se2gmm + our port-map assumption in channel.load()
-    are wired correctly."""
+    transfer function SDD21 must equal the single line's S21. This is a
+    white-box check that se2gmm and our port-map assumption in
+    channel.load() are wired correctly."""
     path, line = _make_two_uncoupled_lines_s4p(tmp_path)
     t, h, freq, sdd21 = channel.load(path)
 

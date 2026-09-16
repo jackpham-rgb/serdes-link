@@ -2,8 +2,9 @@
 
 JTOL uses a linearized, continuous-time small-signal model of the bang-bang
 loop (standard textbook 2nd-order PLL approximation) to get the CEI/OIF-style
-JTOL *shape* — ~20 dB/decade rolloff above the loop bandwidth, flattening to
-the eye margin at high frequency. This is NOT a claim of compliance to any
+JTOL *shape*: about a 20 dB/decade rolloff above the loop bandwidth,
+flattening to the eye margin at high frequency. This is NOT a claim of
+compliance to any
 spec mask, just the same functional form (see the project honesty line).
 Lock acquisition instead uses the real bit-level `cdr.run_cdr` on a synthetic
 oversampled waveform, so at least one CDR figure comes from the actual

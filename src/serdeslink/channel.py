@@ -5,11 +5,11 @@ Port map assumed (must match whatever wrote the .sNp file, including
 data/touchstone/make_synthetic_channel.py):
     port 1 = TX+   port 2 = TX-   port 3 = RX+   port 4 = RX-
 This is scikit-rf's se2gmm(p=2) NATIVE port order for a 4-port: (in+, in-,
-out+, out-) — i.e. grouped by near-end/far-end, not by polarity. It is easy
-to get this backwards (grouped by polarity: TX+, RX+, TX-, RX-) and get
+out+, out-), grouped by near-end/far-end, not by polarity. It is easy to get
+this backwards (grouped by polarity: TX+, RX+, TX-, RX-) and get
 numerically-plausible-looking garbage out of se2gmm. If you load a measured
 file with a different physical port map, renumber it to this order first
-(skrf.Network.renumber) — do not silently trust the file's own port labels.
+(skrf.Network.renumber). Do not silently trust the file's own port labels.
 """
 from __future__ import annotations
 
@@ -103,8 +103,8 @@ def cursor_amplitudes(p: np.ndarray, dt: float, ui_sec: float,
                        n_precursors: int = 2, n_postcursors: int = 4):
     """Sample the pulse response at UI spacing around its peak. Returns
     (main_cursor, isi_cursors) where isi_cursors is precursors then
-    postcursors, each normalized by the main cursor amplitude — the form
-    analysis.ber.isi_pdf expects."""
+    postcursors, each normalized by the main cursor amplitude. This is the
+    form analysis.ber.isi_pdf expects."""
     ui_samples = max(1, int(round(ui_sec / dt)))
     peak = int(np.argmax(np.abs(p)))
     main = p[peak]

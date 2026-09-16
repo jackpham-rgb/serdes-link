@@ -56,7 +56,7 @@ def apply_ctle_time_domain(waveform: np.ndarray, samples_per_ui: int, ui_sec: fl
 def sample_ui_centers(waveform: np.ndarray, samples_per_ui: int,
                        phase_offset_ui: float = 0.5) -> np.ndarray:
     """Downsample a continuous waveform to one sample per UI at a fixed
-    phase — used ahead of the DFE once a timing reference is assumed. The
+    phase. Used ahead of the DFE once a timing reference is assumed. The
     CDR-driven closed-loop sampling lives in cdr.run_cdr."""
     offset = int(round(phase_offset_ui * samples_per_ui))
     return waveform[offset::samples_per_ui]
