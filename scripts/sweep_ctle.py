@@ -31,4 +31,4 @@ def sweep(waveform, samples_per_ui, ui_sec, zero_hz_list, pole1_hz=5e9, pole2_hz
 
 
 if __name__ == "__main__":
-    print("Run via scripts/run_link.py — this module is imported, not standalone.")
+    print("Run via scripts/run_link.py. This module is imported, not standalone.")

@@ -3,8 +3,8 @@
 Standard two-tap feedback polynomials (x^n + x^k + 1) for the orders used in
 SerDes test patterns. Bit-exact alignment to a particular vendor's PRBS
 convention doesn't matter for a link-model eye/BER study (any maximal-length
-sequence has the same flat-spectrum, all-run-lengths-present statistics) —
-what's tested in tests/test_prbs.py are the structural properties that
+sequence has the same flat-spectrum, all-run-lengths-present statistics).
+What's tested in tests/test_prbs.py are the structural properties that
 actually matter: period length, run-length bounds, and non-repetition within
 one period.
 """

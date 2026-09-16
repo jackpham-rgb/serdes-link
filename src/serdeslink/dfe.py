@@ -19,7 +19,7 @@ def run_dfe(samples: np.ndarray, n_taps: int = 4, mu: float = 1e-3,
     decisions : ndarray {-1,+1}, one per input sample
     taps_history : ndarray, shape (len(samples), n_taps)
     residual : ndarray, the value actually seen by the slicer AFTER feedback
-        cancellation — plot THIS for the "opened" eye, never the raw channel
+        cancellation. Plot THIS for the "opened" eye, never the raw channel
         eye (see common failure mode notes in the project howto).
     """
     n = len(samples)

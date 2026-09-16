@@ -14,9 +14,9 @@ def alexander_pd(edge_bit: int, early_bit: int, late_bit: int) -> int:
     """Classic bang-bang phase detector. If the two data bits either side of
     the edge sample agree, there was no transition and the PD abstains (0).
     Otherwise, if the edge sample already matches the bit AFTER the
-    transition, the transition happened before our edge sample landed — i.e.
-    the sampling clock is running LATE (+1). If it still matches the bit
-    BEFORE the transition, the clock is EARLY (-1). Note: run_cdr applies
+    transition, the transition happened before our edge sample landed. That
+    means the sampling clock is running LATE (+1). If it still matches the
+    bit BEFORE the transition, the clock is EARLY (-1). Note: run_cdr applies
     NEGATIVE feedback to this (late -> decrease correction), consistent with
     "late" meaning the sample needs to move earlier."""
     if early_bit == late_bit:

@@ -16,4 +16,4 @@ def sweep(freq_hz, ui_rate_hz, ui_margin, gain_sets):
 
 
 if __name__ == "__main__":
-    print("Run via scripts/run_link.py — this module is imported, not standalone.")
+    print("Run via scripts/run_link.py. This module is imported, not standalone.")

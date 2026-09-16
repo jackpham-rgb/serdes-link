@@ -1,7 +1,7 @@
 """Statistical BER / bathtub curve via the peak-distortion (StatEye-style)
 method: build the ISI amplitude distribution from pulse-response cursors,
 convolve with Gaussian noise/random-jitter, and integrate the tails vs
-decision threshold — no brute-force bit-by-bit Monte Carlo to 1e-12.
+decision threshold. No brute-force bit-by-bit Monte Carlo to 1e-12.
 """
 from __future__ import annotations
 
@@ -13,8 +13,8 @@ def isi_pdf(isi_cursors, n_points: int = 4096, clip: float = 1.5):
     """Amplitude PDF at the sampler from ISI alone (main cursor normalized to
     +-1, excluded from `isi_cursors`). Each cursor contributes a +-|cursor|
     pair (both bit values equally likely), so the full PDF is the
-    convolution of one two-point distribution per cursor — the standard
-    peak-distortion construction."""
+    convolution of one two-point distribution per cursor. This is the
+    standard peak-distortion construction."""
     amp = np.linspace(-clip, clip, n_points)
     da = amp[1] - amp[0]
     pdf = np.zeros(n_points)

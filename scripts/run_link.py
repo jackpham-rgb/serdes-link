@@ -34,7 +34,7 @@ DATA_DIR = ROOT / "data" / "touchstone"
 CHANNEL_FILE = DATA_DIR / "synthetic_12in_channel.s4p"
 
 # Rbit chosen for LiteVNA-class (~6 GHz) coverage per the project howto
-# (Nyquist ~3x within instrument BW) — see docs/00-spec.md. Provisional until
+# (Nyquist ~3x within instrument BW). See docs/00-spec.md. Provisional until
 # a real VNA spec locks this number in.
 RBIT = 5e9
 UI_SEC = 1.0 / RBIT

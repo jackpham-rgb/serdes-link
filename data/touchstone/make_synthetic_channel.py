@@ -3,14 +3,14 @@
 Stand-in for a real measured board (Stage B / P5 in the master reference).
 Builds a differential channel as two identical, UNCOUPLED, lossy microstrip
 lines (TX+ -> RX+ and TX- -> RX-) on FR4-like dielectric, assembled into a
-4-port single-ended file with port order (1=TX+, 2=TX-, 3=RX+, 4=RX-) — the
-scikit-rf se2gmm(p=2) native ordering that channel.load() assumes. No
+4-port single-ended file with port order (1=TX+, 2=TX-, 3=RX+, 4=RX-). This
+is the scikit-rf se2gmm(p=2) native ordering that channel.load() assumes. No
 differential-mode coupling is modeled (a real coupled pair would show some
-common-to-differential conversion); that's an honest simplification worth
+common-to-differential conversion). That's an honest simplification worth
 calling out, not a measured result.
 
 Swap the file this writes for a real measured .s4p in this folder once one
-exists — channel.load() does not change.
+exists. channel.load() does not need to change.
 """
 from __future__ import annotations
 
