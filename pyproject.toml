@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "serdeslink"
+version = "0.1.0"
+description = "High-speed serial link model: channel, TX, CTLE, DFE, CDR, eye/BER/JTOL analysis"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "scikit-rf",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
