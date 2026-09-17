@@ -62,6 +62,13 @@ high-frequency content faster than it recovers signal, exactly the effect
 the project howto calls out. Even at the best CTLE setting the eye is still
 far from open. This channel needs the DFE.
 
+The dashed curve and star are `analysis/optimize.py`'s fit: a least-squares
+quadratic through the swept points, solved for its vertex, so the reported
+optimum isn't limited to the 12 grid points actually sampled. On this run
+it predicts roughly 11.5 dB, close to the best sampled point (about 9.8 dB);
+given how noisy the sweep is at this eye-height scale, treat the fit as a
+sanity check on the grid search, not a more precise answer than it is.
+
 ![DFE convergence](imgs/dfe_taps.png)
 
 Tap 1 (the dominant postcursor) converges to roughly -0.48 of the main

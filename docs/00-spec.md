@@ -33,16 +33,30 @@ PRBS15 -> NRZ -> TX FFE (1 precursor, 1 postcursor) -> finite-rise shaping
         -> eye / statistical BER (peak-distortion) / JTOL (linearized loop)
 ```
 
-## The ML decision (recorded here so it isn't re-litigated)
+## The ML / optimization decision (recorded here so it isn't re-litigated)
 
-**POSTPONED, decided 2026-09-16.** No ML-for-transistor-sizing, and no ML
-"designs" anything in this repo. Where ML shows up (not yet, but noted for
-Stage D if ever un-postponed): applied regression/feature-importance on
-measurement data, for example eye height or BER vs CTLE/DFE settings. It is
-an *analysis* tool, never a design method, and never framed as more than
-that. See the planning repo's `portfolio-projects-reference.txt` section 8
-for the full reasoning; that file is private and not part of this public
-repo.
+Two different things both get called "ML," and only one of them is out of
+scope for this repo.
+
+**Out of scope, not planned:** ML that *designs or judges a circuit*, for
+example a model that proposes analog transistor sizes, or scores a layout.
+That's a real, separate research direction (it was the original idea for
+"Stage D" here), and it stays out of this repo: it would overpromise and
+isn't something I've built.
+
+**In scope, and used here:** applied math/optimization to *process signal
+and measurement data*. This repo doesn't just promise that, it does it:
+`src/serdeslink/analysis/optimize.py` fits a quadratic (ordinary least
+squares) to the CTLE peaking sweep and solves for its vertex, i.e. the
+continuous peaking value the *data* predicts is optimal, rather than only
+reporting the best of the handful of sampled points (see the CTLE sweep
+figure in docs/01-model.md). That's the same kind of applied
+regression/optimization this project uses elsewhere (statistical BER,
+the DFE and CDR's adaptive loop math): read the numbers, fit or solve
+something, report the result. No part of it looks at or judges a circuit's
+layout. See the planning repo's `portfolio-projects-reference.txt` section
+8 for the fuller reasoning; that file is private and not part of this
+public repo.
 
 ## Honesty line
 

@@ -127,6 +127,6 @@ Three real bugs, in the order I hit them:
 ## References
 
 - cocotb docs: https://docs.cocotb.org
-- Icarus Verilog: http://iverilog.icarus.com
+- Icarus Verilog: https://github.com/steveicarus/iverilog
 - The general cocotb "read right after RisingEdge" hazard: see cocotb's own
   synchronization-primitive docs for `ReadOnly` / `FallingEdge`.

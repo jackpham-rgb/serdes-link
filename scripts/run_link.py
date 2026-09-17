@@ -26,6 +26,7 @@ from serdeslink import link  # noqa: E402
 from serdeslink.analysis import ber as ber_mod  # noqa: E402
 from serdeslink.analysis import eye as eye_mod  # noqa: E402
 from serdeslink.analysis import jitter as jitter_mod  # noqa: E402
+from serdeslink.analysis import optimize as optimize_mod  # noqa: E402
 from sweep_ctle import sweep as sweep_ctle  # noqa: E402
 from sweep_jtol import sweep as sweep_jtol  # noqa: E402
 
@@ -66,16 +67,35 @@ def fig_ctle_sweep(waveform, samples_per_ui, ui_sec):
     peaks = [r["peaking_db"] for r in results]
     heights = [r["eye_height"] for r in results]
 
+    # Applied optimization on this sweep's own data (see
+    # src/serdeslink/analysis/optimize.py): fit a quadratic and solve for
+    # its vertex, rather than only reporting the best of the 12 sampled
+    # points. This is NOT ML that designs a circuit; it's ordinary least
+    # squares finding where a swept measurement peaks.
+    fit_peak_db, fit_height, coeffs = optimize_mod.fit_optimal_peaking(peaks, heights)
+
     fig, ax = plt.subplots(figsize=(5, 4))
-    ax.plot(peaks, heights, "o-")
+    ax.plot(peaks, heights, "o", label="sampled sweep points")
+    if fit_peak_db is not None:
+        curve_x = np.linspace(min(peaks), max(peaks), 200)
+        curve_y = np.polyval(coeffs, curve_x)
+        ax.plot(curve_x, curve_y, "-", alpha=0.6, label="quadratic fit")
+        ax.axvline(fit_peak_db, color="gray", linestyle="--", linewidth=1)
+        ax.plot([fit_peak_db], [fit_height], "*", markersize=14,
+                label=f"fitted optimum ({fit_peak_db:.1f} dB)")
     ax.set_xlabel("realized CTLE peaking (dB)")
     ax.set_ylabel("eye height (a.u.)")
     ax.set_title("CTLE peaking sweep")
+    ax.legend(fontsize=8)
     fig.tight_layout()
     fig.savefig(IMG_DIR / "ctle_sweep.png", dpi=150)
     plt.close(fig)
 
-    return max(results, key=lambda r: r["eye_height"])
+    best_sampled = max(results, key=lambda r: r["eye_height"])
+    if fit_peak_db is not None:
+        print(f"[ctle] quadratic fit predicts an optimum at {fit_peak_db:.2f} dB "
+              f"peaking (best sampled point was {best_sampled['peaking_db']:.2f} dB)")
+    return best_sampled
 
 
 def fig_dfe(equalized_waveform, samples_per_ui):
