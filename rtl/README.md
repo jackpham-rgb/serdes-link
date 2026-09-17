@@ -15,5 +15,5 @@ Files:
 - `serdes_digital_top.sv`: flat-IO wrapper bundling all three, the
   eventual P2 (Tiny Tapeout) target.
 
-Requires [Icarus Verilog](http://iverilog.icarus.com) on your PATH and
+Requires [Icarus Verilog](https://github.com/steveicarus/iverilog) on your PATH and
 `cocotb` (in `requirements.txt`).
