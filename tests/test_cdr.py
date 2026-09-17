@@ -54,3 +54,47 @@ def test_zero_ppm_stays_near_initial_phase():
     _, _, waveform = _make_waveform(samples_per_ui=samples_per_ui)
     phase_ui, _, _ = cdr.run_cdr(waveform, samples_per_ui, ppm=0.0, kp=0.05, ki=0.001)
     assert np.std(phase_ui[len(phase_ui) // 2:]) < 0.1
+
+
+def test_fixed_point_loop_filter_tracks_float_run_cdr():
+    """The Stage C RTL (cdr_loop_filter.sv) only implements the digital loop
+    filter, not the waveform resampling run_cdr() does. This test replays
+    run_cdr()'s REAL pd_out sequence (from actual bang-bang PD decisions on
+    a real waveform) through the pure fixed-point model and checks the two
+    correction trajectories track each other, proving the fixed-point model
+    is a faithful stand-in for run_cdr()'s float loop filter before it's
+    even compared against RTL."""
+    samples_per_ui = 32
+    pi_steps_per_ui = 64
+    kp, ki = 0.05, 0.001
+    ppm = 200.0
+    _, _, waveform = _make_waveform(samples_per_ui=samples_per_ui)
+
+    phase_ui_float, _, pd_out = cdr.run_cdr(
+        waveform, samples_per_ui, ppm=ppm, kp=kp, ki=ki, pi_steps_per_ui=pi_steps_per_ui,
+    )
+
+    kp_fixed, ki_fixed = cdr.loop_filter_gains_fixed(kp, ki, pi_steps_per_ui)
+    integrator_fixed = 0
+    correction_steps = 0
+    phase_ui_fixed = np.zeros(len(pd_out))
+    for i, pd in enumerate(pd_out):
+        delta_steps, integrator_fixed = cdr.loop_filter_step_fixed(
+            int(pd), integrator_fixed, kp_fixed, ki_fixed,
+        )
+        correction_steps += delta_steps
+        phase_ui_fixed[i] = correction_steps / pi_steps_per_ui
+
+    # Same pd sequence, same gains (up to a one-time fixed-point rounding of
+    # kp/ki): the two trajectories should stay close the whole way, not just
+    # agree on average. 0.05 UI is a small fraction of the eye (see the
+    # ~0.5 UI eye margin used elsewhere in this project).
+    assert np.max(np.abs(phase_ui_fixed - phase_ui_float)) < 0.05
+
+    # and the settled ramp rate (what actually matters for tracking a
+    # frequency offset) should match closely too
+    tail = slice(len(phase_ui_fixed) // 2, None)
+    idx = np.arange(len(phase_ui_fixed))[tail]
+    slope_fixed = np.polyfit(idx, phase_ui_fixed[tail], 1)[0]
+    slope_float = np.polyfit(idx, phase_ui_float[tail], 1)[0]
+    assert abs(slope_fixed - slope_float) < 0.1 * abs(slope_float) + 1e-6

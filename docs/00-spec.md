@@ -47,5 +47,6 @@ repo.
 ## Honesty line
 
 This is a link model plus a synthetic channel (a real measured channel is
-Stage B) plus, later, digital control RTL. It is not a full-rate SerDes PHY
-tapeout.
+Stage B) plus digital control RTL cosimulated against that model (Stage C,
+see docs/03-rtl.md). It is not a full-rate SerDes PHY tapeout, and the RTL
+has not run on real silicon or an FPGA yet.

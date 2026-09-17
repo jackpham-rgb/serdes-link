@@ -3,3 +3,4 @@ scipy
 matplotlib
 scikit-rf
 pytest
+cocotb
