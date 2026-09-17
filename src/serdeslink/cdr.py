@@ -95,3 +95,54 @@ def run_cdr(waveform: np.ndarray, samples_per_ui: int, ppm: float = 0.0,
         prev_bit = bit
 
     return phase_ui, data_bits, pd_out
+
+
+# ── Stage C fixed-point golden model (cdr_loop_filter.sv) ──────────────────
+#
+# run_cdr() above mixes two things that don't both belong in digital RTL:
+# resampling a continuous waveform (that's the analog front end's job in
+# real hardware) and the digital loop filter that turns a phase-detector
+# reading into a phase-interpolator correction (that IS real digital logic,
+# and is what Stage C implements in SystemVerilog). The functions below are
+# the digital loop filter ALONE, in pure fixed-point integer arithmetic, so
+# they can be compared bit-for-bit against the RTL in a cocotb testbench.
+#
+# Units: everything is in integer "subunits", where PI_SUBSTEPS subunits
+# make one phase-interpolator step (1/pi_steps_per_ui of a UI). This keeps
+# the RTL free of `samples_per_ui`, which is a Stage-A-simulation-only
+# concept (how finely the waveform happens to be oversampled in software) -
+# real hardware has no such number, only the PI's own step resolution.
+PI_SUBSTEPS = 256
+
+
+def loop_filter_gains_fixed(kp: float, ki: float, pi_steps_per_ui: int) -> tuple[int, int]:
+    """Convert run_cdr()'s float kp/ki (UI-scale gains) into the fixed-point
+    integers cdr_loop_filter.sv is parameterized with. Rounding happens once,
+    here, so both the RTL and the Python golden model use the identical
+    integer gain, not two independently-rounded copies of the same number."""
+    kp_fixed = round(kp * pi_steps_per_ui * PI_SUBSTEPS)
+    ki_fixed = round(ki * pi_steps_per_ui * PI_SUBSTEPS)
+    return kp_fixed, ki_fixed
+
+
+def loop_filter_step_fixed(pd: int, integrator_fixed: int, kp_fixed: int, ki_fixed: int):
+    """One digital-loop-filter update in pure integer arithmetic: no floats
+    anywhere, matching cdr_loop_filter.sv instruction-for-instruction. Given
+    the same `pd` sequence and gains, RTL and this function must agree
+    exactly.
+
+    Returns
+    -------
+    delta_steps : int, the PI step count to add to the running correction
+        this cycle (can be 0 for several cycles in a row; the PI itself
+        only moves in whole steps).
+    integrator_fixed : int, updated integrator state to pass into the next
+        call.
+    """
+    integrator_fixed = integrator_fixed + ki_fixed * (-pd)
+    raw = kp_fixed * (-pd) + integrator_fixed
+    if raw >= 0:
+        delta_steps = (raw + PI_SUBSTEPS // 2) // PI_SUBSTEPS
+    else:
+        delta_steps = -((-raw + PI_SUBSTEPS // 2) // PI_SUBSTEPS)
+    return delta_steps, integrator_fixed

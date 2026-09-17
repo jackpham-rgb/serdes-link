@@ -3,3 +3,9 @@ __pycache__/
 *.pyc
 .pytest_cache/
 *.egg-info/
+
+# cocotb/iverilog build products (regenerate locally, don't commit)
+tests/rtl/sim_build/
+*.vcd
+*.result.xml
+results.xml
