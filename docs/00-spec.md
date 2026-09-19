@@ -55,7 +55,11 @@ goes further: it computes the closed-form MMSE/least-squares equalizer
 taps (`w* = R^-1 p`) next to `dfe.py`'s adaptive sign-sign LMS, shows LMS
 actually converges to that optimum, and adds a convex (cvxpy),
 budget-constrained version that expresses a real constraint (a TX
-tap-magnitude budget) neither closed form can. See docs/04-applied-math.md.
+tap-magnitude budget) neither closed form can. `optimal_threshold`/
+`error_probability` in `analysis/ber.py` name the slicer as a MAP detector
+and derive its optimal decision threshold from the likelihood ratio,
+showing a measurable BER improvement once the channel isn't perfectly
+symmetric. See docs/04-applied-math.md.
 That's the same kind of applied regression/optimization this project uses
 elsewhere (statistical BER, the DFE and CDR's adaptive loop math): read the
 numbers, fit or solve something, report the result. No part of it looks at
