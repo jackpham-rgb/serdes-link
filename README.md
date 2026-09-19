@@ -18,13 +18,16 @@ equalization, a CTLE, a DFE, and a bang-bang CDR. It closes the loop between
   detector, 2nd-order digital loop filter, and finite-resolution PI, run
   bit-level on an oversampled waveform with an injected ppm offset.
 - `src/serdeslink/analysis/`: eye diagrams, statistical BER (peak-distortion
-  method), JTOL (linearized loop model), `optimize.py` (fits the CTLE
-  sweep and solves for its continuous optimum), and `equalizer_opt.py`
-  (closed-form MMSE/least-squares equalizer taps next to `dfe.py`'s
-  adaptive LMS, plus a convex, tap-budget-constrained version via cvxpy;
-  see [docs/04-applied-math.md](docs/04-applied-math.md)). Applied
-  optimization on measurement/signal data, not ML that designs a circuit;
-  see the honesty line.
+  method, plus `optimal_threshold`/`error_probability`: the slicer named
+  as a MAP detector, with its decision threshold derived from the
+  likelihood ratio instead of assumed to be 0), JTOL (linearized loop
+  model), `optimize.py` (fits the CTLE sweep and solves for its continuous
+  optimum), and `equalizer_opt.py` (closed-form MMSE/least-squares
+  equalizer taps next to `dfe.py`'s adaptive LMS, plus a convex,
+  tap-budget-constrained version via cvxpy; see
+  [docs/04-applied-math.md](docs/04-applied-math.md)). Applied optimization
+  on measurement/signal data, not ML that designs a circuit; see the
+  honesty line.
 - Currently runs on a **synthetic** channel (`data/touchstone/`, scikit-rf
   FR4 microstrip). Stage B swaps in a real measured channel with zero code
   changes to `channel.load()`.
@@ -59,9 +62,10 @@ Spec and decisions: [docs/00-spec.md](docs/00-spec.md).
 python -m venv .venv && source .venv/bin/activate   # or .venv\Scripts\activate on Windows
 pip install -r requirements.txt
 pip install -e .
-python -m pytest                       # 29 tests: 26 Python (Stage A + applied math + PSIJ) + 3 RTL cosims (Stage C)
+python -m pytest                       # 34 tests: 31 Python (Stage A + applied math + PSIJ) + 3 RTL cosims (Stage C)
 python scripts/run_link.py             # regenerates every Stage A figure in docs/imgs/
 python scripts/run_equalizer_opt.py    # regenerates the LMS vs. MMSE vs. convex figure
+python scripts/run_ber_threshold.py    # regenerates the MAP-optimal threshold figure
 python scripts/run_psij.py             # regenerates the PSIJ eye-closure and spectrum figures
 ```
 
