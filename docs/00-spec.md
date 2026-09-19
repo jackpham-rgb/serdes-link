@@ -50,13 +50,18 @@ and measurement data*. This repo doesn't just promise that, it does it:
 squares) to the CTLE peaking sweep and solves for its vertex, i.e. the
 continuous peaking value the *data* predicts is optimal, rather than only
 reporting the best of the handful of sampled points (see the CTLE sweep
-figure in docs/01-model.md). That's the same kind of applied
-regression/optimization this project uses elsewhere (statistical BER,
-the DFE and CDR's adaptive loop math): read the numbers, fit or solve
-something, report the result. No part of it looks at or judges a circuit's
-layout. See the planning repo's `portfolio-projects-reference.txt` section
-8 for the fuller reasoning; that file is private and not part of this
-public repo.
+figure in docs/01-model.md). `src/serdeslink/analysis/equalizer_opt.py`
+goes further: it computes the closed-form MMSE/least-squares equalizer
+taps (`w* = R^-1 p`) next to `dfe.py`'s adaptive sign-sign LMS, shows LMS
+actually converges to that optimum, and adds a convex (cvxpy),
+budget-constrained version that expresses a real constraint (a TX
+tap-magnitude budget) neither closed form can. See docs/04-applied-math.md.
+That's the same kind of applied regression/optimization this project uses
+elsewhere (statistical BER, the DFE and CDR's adaptive loop math): read the
+numbers, fit or solve something, report the result. No part of it looks at
+or judges a circuit's layout. See the planning repo's
+`portfolio-projects-reference.txt` section 8 for the fuller reasoning; that
+file is private and not part of this public repo.
 
 ## Honesty line
 

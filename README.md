@@ -18,15 +18,24 @@ equalization, a CTLE, a DFE, and a bang-bang CDR. It closes the loop between
   detector, 2nd-order digital loop filter, and finite-resolution PI, run
   bit-level on an oversampled waveform with an injected ppm offset.
 - `src/serdeslink/analysis/`: eye diagrams, statistical BER (peak-distortion
-  method), JTOL (linearized loop model), and `optimize.py` (fits the CTLE
-  sweep and solves for its continuous optimum: applied optimization on
-  measurement data, not ML that designs a circuit; see the honesty line).
+  method), JTOL (linearized loop model), `optimize.py` (fits the CTLE
+  sweep and solves for its continuous optimum), and `equalizer_opt.py`
+  (closed-form MMSE/least-squares equalizer taps next to `dfe.py`'s
+  adaptive LMS, plus a convex, tap-budget-constrained version via cvxpy;
+  see [docs/04-applied-math.md](docs/04-applied-math.md)). Applied
+  optimization on measurement/signal data, not ML that designs a circuit;
+  see the honesty line.
 - Currently runs on a **synthetic** channel (`data/touchstone/`, scikit-rf
   FR4 microstrip). Stage B swaps in a real measured channel with zero code
   changes to `channel.load()`.
 - `rtl/`: SystemVerilog reimplementation of the PRBS generator, the DFE, and
   the CDR's digital loop filter, cosimulated against the Python golden
   models above via cocotb + Icarus Verilog.
+- Power-supply-induced jitter (PSIJ): `tx.apply_supply_jitter` turns supply
+  ripple into edge-timing jitter, `analysis/eye.py::crossing_jitter_ui`
+  measures the resulting horizontal eye closure, and `analysis/jitter.py`
+  ties it to the CDR's own loop bandwidth (tracked out below it, closes
+  the eye above it); see [docs/05-power-integrity.md](docs/05-power-integrity.md).
 
 ## Stages
 
@@ -50,8 +59,10 @@ Spec and decisions: [docs/00-spec.md](docs/00-spec.md).
 python -m venv .venv && source .venv/bin/activate   # or .venv\Scripts\activate on Windows
 pip install -r requirements.txt
 pip install -e .
-python -m pytest                # 20 tests: 17 Python (Stage A) + 3 RTL cosims (Stage C)
-python scripts/run_link.py      # regenerates every figure in docs/imgs/
+python -m pytest                       # 29 tests: 26 Python (Stage A + applied math + PSIJ) + 3 RTL cosims (Stage C)
+python scripts/run_link.py             # regenerates every Stage A figure in docs/imgs/
+python scripts/run_equalizer_opt.py    # regenerates the LMS vs. MMSE vs. convex figure
+python scripts/run_psij.py             # regenerates the PSIJ eye-closure and spectrum figures
 ```
 
 Stage C's RTL tests also need [Icarus Verilog](https://github.com/steveicarus/iverilog)

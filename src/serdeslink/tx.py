@@ -39,3 +39,31 @@ def rise_fall_shape(symbols: np.ndarray, ui: float, samples_per_ui: int,
     window /= window.sum()
     shaped = np.convolve(zoh, window, mode="same")
     return shaped[:n]
+
+
+def apply_supply_jitter(waveform: np.ndarray, samples_per_ui: int, ui_sec: float,
+                         kvs_ps_per_mv: float, ripple_mv: float, ripple_freq_hz: float,
+                         phase: float = 0.0) -> np.ndarray:
+    """Power-supply-induced jitter (PSIJ): a driver's supply-delay
+    sensitivity Kvs (ps of edge-timing shift per mV of supply ripple) turns
+    supply ripple Vn(t) into a timing modulation dt(t) = Kvs * Vn(t). Model
+    that directly as a time warp of the already-shaped TX waveform: the
+    sample that should land at physical time t instead reads the ideal
+    waveform's value from time (t - dt(t)), exactly what "the edge arrived
+    dt(t) early/late" means.
+
+    `waveform` must be sampled on a uniform grid at `samples_per_ui`
+    samples/UI (i.e. the output of `rise_fall_shape`, before channel
+    convolution). `ripple_mv` is the ripple's peak amplitude, not RMS.
+    `kvs_ps_per_mv` and `ripple_mv` are amplitudes (not already a dt); at
+    ripple_mv=0 this returns `waveform` unchanged (checked in tests).
+    """
+    n = len(waveform)
+    dt_sample = ui_sec / samples_per_ui
+    t = np.arange(n) * dt_sample
+
+    vn = ripple_mv * np.sin(2 * np.pi * ripple_freq_hz * t + phase)
+    dt_shift = kvs_ps_per_mv * 1e-12 * vn  # ps/mV * mV -> ps -> s
+
+    query_t = t - dt_shift
+    return np.interp(query_t, t, waveform)

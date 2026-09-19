@@ -44,6 +44,45 @@ def eye_height(traces: np.ndarray, center_frac: float = 0.5, band_frac: float = 
     return float(top.min() - bottom.max())
 
 
+def crossing_jitter_ui(traces: np.ndarray, t_ui: np.ndarray, crossing_t_ui: float = 1.0,
+                        search_band_ui: float = 0.6) -> tuple[float, np.ndarray]:
+    """Horizontal (timing) eye metric: peak-to-peak spread of where traces
+    cross zero near `crossing_t_ui` (a UI boundary, where a bit TRANSITION
+    can happen). `eye_height` measures the VERTICAL opening, appropriate
+    for amplitude/ISI effects; this measures the HORIZONTAL one, the
+    correct metric for timing jitter (a supply-ripple-induced dt(t) shows
+    up here, not necessarily in eye_height -- see docs/05-power-integrity.md).
+    Only traces that actually transition near `crossing_t_ui` contribute
+    (a PRBS trace with no transition there never crosses and is skipped,
+    same as a real TIE/jitter measurement only using edges that exist).
+
+    Returns
+    -------
+    spread_ui : float, max - min crossing time (0.0 if fewer than 2 traces
+        have a transition in the search band)
+    crossings_ui : ndarray, the individual crossing times found
+    """
+    lo = np.searchsorted(t_ui, crossing_t_ui - search_band_ui / 2)
+    hi = np.searchsorted(t_ui, crossing_t_ui + search_band_ui / 2)
+    t_seg = t_ui[lo:hi]
+    crossings = []
+    for tr in traces:
+        seg = tr[lo:hi]
+        signs = np.sign(seg)
+        idx = np.flatnonzero(np.diff(signs) != 0)
+        if idx.size == 0:
+            continue
+        i = idx[0]
+        y0, y1 = seg[i], seg[i + 1]
+        t0, t1 = t_seg[i], t_seg[i + 1]
+        frac = -y0 / (y1 - y0)
+        crossings.append(t0 + frac * (t1 - t0))
+    crossings = np.array(crossings)
+    if len(crossings) < 2:
+        return 0.0, crossings
+    return float(crossings.max() - crossings.min()), crossings
+
+
 def plot_eye(ax, t_ui, traces, title=None, color="C0", alpha=0.15):
     for tr in traces:
         ax.plot(t_ui, tr, color=color, alpha=alpha, linewidth=0.6)

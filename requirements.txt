@@ -4,3 +4,4 @@ matplotlib
 scikit-rf
 pytest
 cocotb
+cvxpy
