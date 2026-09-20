@@ -5,3 +5,5 @@ scikit-rf
 pytest
 cocotb
 cvxpy
+xgboost
+scikit-learn
