@@ -5,11 +5,11 @@ behind this repo's design choices *visible*, not just claimed. One block
 per result: the formula, the course/book it's from, the code that
 implements it, and the plot that proves it.
 
-Started with Workstream 1 (the optimal equalizer) and Workstream 2
-(detection-theory BER). A regression surrogate on sweep data and a
-Kalman-filter view of CDR phase tracking are follow-on workstreams, not
-yet built; see `career/p1-applied-math-extension.txt` (planning repo,
-private) for the roadmap.
+Started with Workstream 1 (the optimal equalizer), Workstream 2
+(detection-theory BER), and Workstream 3 (a regression surrogate on sweep
+data). A Kalman-filter view of CDR phase tracking is a follow-on
+workstream, not yet built; see `career/p1-applied-math-extension.txt`
+(planning repo, private) for the roadmap.
 
 ## Workstream 1: the optimal equalizer (MMSE / least squares / convex)
 
@@ -151,3 +151,97 @@ Reproduce: `python scripts/run_ber_threshold.py`. Tests: `tests/test_ber.py`
 shift, the derived threshold beats naive 0 under noise asymmetry, a
 brute-force grid-search cross-check for the no-closed-form case, and
 agreement with `bathtub` in the symmetric case).
+
+## Workstream 3: a regression surrogate on sweep data
+
+**Formula**
+
+`optimize.py` already fits eye height vs. a SINGLE swept variable (CTLE
+peaking) with a 1-D quadratic and solves for its vertex. Workstream 3
+generalizes this to several settings at once:
+
+```
+x = (channel length, CTLE zero frequency, DFE tap count)
+y = log10(BER)
+y_hat = f(x)
+```
+
+starting with plain polynomial regression (the normal equations again,
+now on more than one input dimension: `y = X_poly @ w`, `w = (X^T X)^-1
+X^T y` via `lstsq`), then a gradient-boosted tree model (XGBoost) for
+whatever a fixed-degree polynomial can't represent. Feature
+importances/sensitivities are read as design intuition (which knob
+actually moves BER the most), and the fitted surrogate can propose good
+settings by searching over the CHEAP model instead of the expensive real
+sweep -- the same idea as `optimize.fit_optimal_peaking`'s vertex, just
+for more than one dimension where there's no closed-form vertex to solve
+for directly.
+
+**Book / course**
+
+EECS189 (regression, bias/variance, model capacity: Murphy's
+*Probabilistic Machine Learning*, Prince's *Understanding Deep Learning*).
+
+**Code**
+
+`src/serdeslink/analysis/surrogate.py`:
+- `polynomial_features(X, degree=2)` / `fit_linear_regression(X, y)`: an
+  explicit, readable polynomial design matrix (bias, linear, squared, and
+  pairwise-interaction terms) and its normal-equations fit.
+- `PolynomialSurrogate`: wraps the two above into a `.fit`/`.predict`
+  object, plus `.coefficient_table()` for inspecting the fitted terms.
+- `fit_xgboost_surrogate(X, y)`: the same (X, y) fit with `xgboost.
+  XGBRegressor`, whose `.feature_importances_` is the design-intuition
+  readout.
+- `suggest_settings(predict_fn, bounds, integer_dims)`: random search over
+  a fitted surrogate (cheap to evaluate) instead of the real, expensive
+  sweep.
+
+`scripts/sweep_and_fit.py` generates the dataset: for each of 6 channel
+lengths (4-24 in) x 6 CTLE zero placements x 6 DFE tap counts (216 points
+total), it builds/loads the corresponding synthetic channel, runs
+TX -> channel -> CTLE -> DFE, and turns the post-DFE residual into
+`log10(BER)` via `ber.error_probability` (Workstream 2's own detection-
+theory function, reused here as the sweep's target metric instead of
+inventing a new one: `mu = 1` since decisions are always +-1 by
+construction, `sigma` = the residual's spread around the actual decided
+level).
+
+**Result**
+
+![Surrogate fit quality and feature importance](imgs/surrogate_fit.png)
+
+On a held-out 25% split, the degree-2 polynomial gets R^2 = 0.29; XGBoost
+gets R^2 = 0.99. This isn't a close contest and that's the point: log10(BER)
+here spans roughly -53 to -1 (a completely realistic range for real BER
+specs, which routinely span many orders of magnitude), and that's a
+genuinely non-quadratic response surface no fixed-degree polynomial can
+track well, while a tree-based model handles it easily. This is the
+EECS189 bias/variance story directly, not just named: a low-capacity
+model underfits, and the fix is a higher-capacity model, not a
+better-tuned low-capacity one.
+
+The feature importances say something real about THIS channel/pipeline:
+channel length dominates (~0.60), CTLE zero placement matters almost as
+much (~0.39), and DFE tap count barely moves the needle (~0.01) once the
+channel and CTLE are already in a reasonable range. That is a legitimate
+design read: for this link, getting the channel length/loss budget and
+the CTLE right matters far more than adding more DFE taps.
+
+`suggest_settings` run on the fitted XGBoost surrogate proposes a length/
+CTLE/tap-count combination predicting an extremely low BER (log10(BER)
+around -53). That number itself shouldn't be read too literally: once BER
+is already astronomically small, many nearby settings are all
+"essentially zero" and the exact ranked order among them is dominated by
+noise in the 1500-sample residual estimate the sweep uses, not by a real
+difference in link quality. The surrogate's genuinely useful output here
+is the broad trend and the feature ranking above, not the single "best"
+point in an already-flat, near-zero region.
+
+Reproduce: `python scripts/sweep_and_fit.py`. Tests: `tests/test_surrogate.py`
+(6 tests, all on synthetic data with a known ground truth rather than the
+expensive real sweep: polynomial-feature expansion correctness, R^2
+sanity, the polynomial surrogate recovering a known quadratic, XGBoost
+beating polynomial regression on a function no quadratic can fit,
+`suggest_settings` finding a known minimum, and its integer-rounding
+option).
