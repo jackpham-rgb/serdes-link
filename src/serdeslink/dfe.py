@@ -1,6 +1,6 @@
 """Decision-feedback equalizer with sign-sign LMS tap adaptation.
 
-Pure array function: no matplotlib, no file I/O. This is what Stage C
+Pure array function that does not use matplotlib or file I/O. This is what Stage C
 reimplements in SystemVerilog and cosimulates against via cocotb, so its
 inputs/outputs stay plain arrays on purpose.
 """
