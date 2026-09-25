@@ -1,0 +1,294 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "a0925373-d4cc-4227-a488-75751c7e931a")
+	(paper "A4")
+	(lib_symbols
+		(symbol "Connector:Conn_Coaxial"
+				(pin_names
+					(offset 1.016)
+					(hide yes)
+				)
+				(exclude_from_sim no)
+				(in_bom yes)
+				(on_board yes)
+				(in_pos_files yes)
+				(duplicate_pin_numbers_are_jumpers no)
+				(property "Reference" "J"
+					(at 0.254 3.048 0)
+					(show_name no)
+					(do_not_autoplace no)
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(property "Value" "Conn_Coaxial"
+					(at 2.921 0 90)
+					(show_name no)
+					(do_not_autoplace no)
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(property "Footprint" ""
+					(at 0 0 0)
+					(show_name no)
+					(do_not_autoplace no)
+					(hide yes)
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(property "Datasheet" ""
+					(at 0 0 0)
+					(show_name no)
+					(do_not_autoplace no)
+					(hide yes)
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(property "Description" "coaxial connector (BNC, SMA, SMB, SMC, Cinch/RCA, LEMO, ...)"
+					(at 0 0 0)
+					(show_name no)
+					(do_not_autoplace no)
+					(hide yes)
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(property "ki_keywords" "BNC SMA SMB SMC LEMO coaxial connector CINCH RCA MCX MMCX U.FL UMRF"
+					(at 0 0 0)
+					(show_name no)
+					(do_not_autoplace no)
+					(hide yes)
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(property "ki_fp_filters" "*BNC* *SMA* *SMB* *SMC* *Cinch* *LEMO* *UMRF* *MCX* *U.FL*"
+					(at 0 0 0)
+					(show_name no)
+					(do_not_autoplace no)
+					(hide yes)
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(symbol "Conn_Coaxial_0_1"
+					(polyline
+						(pts
+							(xy -2.54 0) (xy -0.508 0)
+						)
+						(stroke
+							(width 0)
+							(type default)
+						)
+						(fill
+							(type none)
+						)
+					)
+					(arc
+						(start 1.778 0)
+						(mid 0.222 -1.8079)
+						(end -1.778 -0.508)
+						(stroke
+							(width 0.254)
+							(type default)
+						)
+						(fill
+							(type none)
+						)
+					)
+					(arc
+						(start -1.778 0.508)
+						(mid 0.2221 1.8084)
+						(end 1.778 0)
+						(stroke
+							(width 0.254)
+							(type default)
+						)
+						(fill
+							(type none)
+						)
+					)
+					(circle
+						(center 0 0)
+						(radius 0.508)
+						(stroke
+							(width 0.2032)
+							(type default)
+						)
+						(fill
+							(type none)
+						)
+					)
+					(polyline
+						(pts
+							(xy 0 -2.54) (xy 0 -1.778)
+						)
+						(stroke
+							(width 0)
+							(type default)
+						)
+						(fill
+							(type none)
+						)
+					)
+				)
+				(symbol "Conn_Coaxial_1_1"
+					(pin passive line
+						(at -5.08 0 0)
+						(length 2.54)
+						(name "In"
+							(effects
+								(font
+									(size 1.27 1.27)
+								)
+							)
+						)
+						(number "1"
+							(effects
+								(font
+									(size 1.27 1.27)
+								)
+							)
+						)
+					)
+					(pin passive line
+						(at 0 -5.08 90)
+						(length 2.54)
+						(name "Ext"
+							(effects
+								(font
+									(size 1.27 1.27)
+								)
+							)
+						)
+						(number "2"
+							(effects
+								(font
+									(size 1.27 1.27)
+								)
+							)
+						)
+					)
+				)
+				(embedded_fonts no)
+			)
+	)
+	(symbol (lib_id "Connector:Conn_Coaxial") (at 60.96 63.5 0) (unit 1) (body_style 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (dnp no)
+		(uuid "191fc622-128f-4a5c-afb0-1f64b72ea6db")
+		(property "Reference" "J1" (at 60.96 57.15 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "SMA edge launch" (at 60.96 72.39 0) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "Connector_Coaxial:SMA_Amphenol_132289_EdgeMount" (at 60.96 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 60.96 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "fb7584b2-aeb7-4f0f-a6bd-fdad57745ff0"))
+		(pin "2" (uuid "260e896e-49f7-428c-8eb4-266805e196ca"))
+		(instances (project "serdes_test_channel" (path "/a0925373-d4cc-4227-a488-75751c7e931a" (reference "J1") (unit 1))))
+	)
+	(wire (pts (xy 55.88 63.5) (xy 48.260000000000005 63.5)) (stroke (width 0) (type default)) (uuid "d6252663-e4d6-4db1-a81c-a7119fdff3da"))
+	(label "CH_P" (at 48.260000000000005 63.5 180) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "2cb5f435-911e-4b6d-9ff1-7abc70fed208"))
+	(wire (pts (xy 60.96 68.58) (xy 60.96 76.2)) (stroke (width 0) (type default)) (uuid "a47930c3-5b6b-4d5a-b967-e5e7099ff61a"))
+	(label "GND" (at 60.96 76.2 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "ce127f84-7092-4510-b0ef-f6134050441d"))
+	(text "Port 1  TX+" (at 60.96 52.07 0) (effects (font (size 1.27 1.27))) (uuid "64d70661-bc1f-4752-ad71-50a914ce923e"))
+	(symbol (lib_id "Connector:Conn_Coaxial") (at 101.6 63.5 0) (unit 1) (body_style 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (dnp no)
+		(uuid "96bc7857-d184-4d94-98b8-d1ea63a790c5")
+		(property "Reference" "J2" (at 101.6 57.15 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "SMA edge launch" (at 101.6 72.39 0) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "Connector_Coaxial:SMA_Amphenol_132289_EdgeMount" (at 101.6 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 101.6 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "9b4d4834-4505-429d-8ca8-96eb1ea68e7c"))
+		(pin "2" (uuid "c084b39e-4e93-402f-a757-e447e946f083"))
+		(instances (project "serdes_test_channel" (path "/a0925373-d4cc-4227-a488-75751c7e931a" (reference "J2") (unit 1))))
+	)
+	(wire (pts (xy 96.52 63.5) (xy 88.89999999999999 63.5)) (stroke (width 0) (type default)) (uuid "25700776-d83d-4e67-92c8-956f08448c8e"))
+	(label "CH_M" (at 88.89999999999999 63.5 180) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "f4cc3a9a-fe9d-431e-ba17-bb7d9a766b1f"))
+	(wire (pts (xy 101.6 68.58) (xy 101.6 76.2)) (stroke (width 0) (type default)) (uuid "df5fb190-0d4d-4514-a653-9f048601f48d"))
+	(label "GND" (at 101.6 76.2 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "feacca44-ec8f-4638-8ddb-9b0859ac162b"))
+	(text "Port 2  TX-" (at 101.6 52.07 0) (effects (font (size 1.27 1.27))) (uuid "016245c7-d3fa-4543-83ad-b41cab205d1b"))
+	(symbol (lib_id "Connector:Conn_Coaxial") (at 142.24 63.5 0) (unit 1) (body_style 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (dnp no)
+		(uuid "f5806e05-f291-48b4-92e3-d6f8bf8b59a6")
+		(property "Reference" "J3" (at 142.24 57.15 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "SMA edge launch" (at 142.24 72.39 0) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "Connector_Coaxial:SMA_Amphenol_132289_EdgeMount" (at 142.24 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 142.24 63.5 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "29e74703-6a26-457f-a0b3-2efe339562ae"))
+		(pin "2" (uuid "76d61e44-f08e-4c44-b00f-5f7b99067951"))
+		(instances (project "serdes_test_channel" (path "/a0925373-d4cc-4227-a488-75751c7e931a" (reference "J3") (unit 1))))
+	)
+	(wire (pts (xy 137.16 63.5) (xy 129.54000000000002 63.5)) (stroke (width 0) (type default)) (uuid "6b956f03-de3d-4ca3-8b5f-34005d43a91e"))
+	(label "CH_P" (at 129.54000000000002 63.5 180) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "d629daa9-86ef-487d-873f-7671d4fce133"))
+	(wire (pts (xy 142.24 68.58) (xy 142.24 76.2)) (stroke (width 0) (type default)) (uuid "ed5f3fc2-d082-4cb0-a826-eebda4db5dae"))
+	(label "GND" (at 142.24 76.2 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "a459b0b0-4eb1-4ef8-9e7c-bbce887a1df6"))
+	(text "Port 3  RX+" (at 142.24 52.07 0) (effects (font (size 1.27 1.27))) (uuid "45ff0526-762f-4de2-8020-e0eba19991c7"))
+	(symbol (lib_id "Connector:Conn_Coaxial") (at 60.96 114.3 0) (unit 1) (body_style 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (dnp no)
+		(uuid "3ad7bbd2-146e-497a-9c0c-c6b4d55eefac")
+		(property "Reference" "J4" (at 60.96 107.95 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "SMA edge launch" (at 60.96 123.19 0) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "Connector_Coaxial:SMA_Amphenol_132289_EdgeMount" (at 60.96 114.3 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 60.96 114.3 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "c1454f7e-a420-44f1-b5e5-a13b38caddae"))
+		(pin "2" (uuid "6d1cbf33-8330-4a8f-95d4-607ac881933d"))
+		(instances (project "serdes_test_channel" (path "/a0925373-d4cc-4227-a488-75751c7e931a" (reference "J4") (unit 1))))
+	)
+	(wire (pts (xy 55.88 114.3) (xy 48.260000000000005 114.3)) (stroke (width 0) (type default)) (uuid "bfac8d44-7388-4878-8cf5-dba5b0d020a6"))
+	(label "CH_M" (at 48.260000000000005 114.3 180) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "068c18af-1965-4d97-a450-ae7d1facf115"))
+	(wire (pts (xy 60.96 119.38) (xy 60.96 127.0)) (stroke (width 0) (type default)) (uuid "360f3572-3b70-4c0e-9095-238530355452"))
+	(label "GND" (at 60.96 127.0 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "9af3bda3-d41d-45b7-ad26-e592bcafa3e0"))
+	(text "Port 4  RX-" (at 60.96 102.87 0) (effects (font (size 1.27 1.27))) (uuid "ab78b68c-292e-4c5a-8c52-77bcdca88240"))
+	(symbol (lib_id "Connector:Conn_Coaxial") (at 101.6 114.3 0) (unit 1) (body_style 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (dnp no)
+		(uuid "c9807a82-3c10-4135-9ad8-7fdfb80aad35")
+		(property "Reference" "J5" (at 101.6 107.95 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "SMA edge launch" (at 101.6 123.19 0) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "Connector_Coaxial:SMA_Amphenol_132289_EdgeMount" (at 101.6 114.3 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 101.6 114.3 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "81bc6d48-a1ac-441c-9990-95277fdffa24"))
+		(pin "2" (uuid "235fdaea-cef9-47fc-8bb5-745fa0d0406d"))
+		(instances (project "serdes_test_channel" (path "/a0925373-d4cc-4227-a488-75751c7e931a" (reference "J5") (unit 1))))
+	)
+	(wire (pts (xy 96.52 114.3) (xy 88.89999999999999 114.3)) (stroke (width 0) (type default)) (uuid "959d7062-62a6-47d4-8894-fb9ffe517f15"))
+	(label "THRU" (at 88.89999999999999 114.3 180) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "a2457b09-b8d1-421f-8eed-dbb97051fe53"))
+	(wire (pts (xy 101.6 119.38) (xy 101.6 127.0)) (stroke (width 0) (type default)) (uuid "95426619-d828-4d62-a48b-7a1733b68f17"))
+	(label "GND" (at 101.6 127.0 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "ec2a6229-94b0-4f4f-b9ab-1af6bd11368a"))
+	(text "Thru A" (at 101.6 102.87 0) (effects (font (size 1.27 1.27))) (uuid "9cd7133a-3d91-4f6a-9593-8bc8998e8326"))
+	(symbol (lib_id "Connector:Conn_Coaxial") (at 142.24 114.3 0) (unit 1) (body_style 1)
+		(exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (dnp no)
+		(uuid "7dc2a11e-de01-46bc-ac3b-1d0e7114d398")
+		(property "Reference" "J6" (at 142.24 107.95 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "SMA edge launch" (at 142.24 123.19 0) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "Connector_Coaxial:SMA_Amphenol_132289_EdgeMount" (at 142.24 114.3 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 142.24 114.3 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(pin "1" (uuid "334c97d8-cd29-4b3f-b32a-17ea62331e6e"))
+		(pin "2" (uuid "ed205ece-1c68-45b1-b0d2-42670b2e8651"))
+		(instances (project "serdes_test_channel" (path "/a0925373-d4cc-4227-a488-75751c7e931a" (reference "J6") (unit 1))))
+	)
+	(wire (pts (xy 137.16 114.3) (xy 129.54000000000002 114.3)) (stroke (width 0) (type default)) (uuid "44a13d68-fae2-4618-9878-2fe9a2af587c"))
+	(label "THRU" (at 129.54000000000002 114.3 180) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "7f74cfe0-989c-4720-b362-58fe075edbbb"))
+	(wire (pts (xy 142.24 119.38) (xy 142.24 127.0)) (stroke (width 0) (type default)) (uuid "f2b62fa5-8f17-4fdb-a52e-88a783705277"))
+	(label "GND" (at 142.24 127.0 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "2098ddae-1817-4d32-8d76-896cdaad2215"))
+	(text "Thru B" (at 142.24 102.87 0) (effects (font (size 1.27 1.27))) (uuid "9ebddd2d-ea21-4fcf-8785-41fa645251e1"))
+	(text "SerDes Link Stage B test channel: 12 in uncoupled pair (J1-J3, J2-J4) and 1 in thru (J5-J6)" (at 25.4 25.4 0) (effects (font (size 2 2)) (justify left)) (uuid "17d27e87-34ee-41ac-ab3b-e1b3ffc51195"))
+	(sheet_instances (path "/" (page "1")))
+	(embedded_fonts no)
+)
