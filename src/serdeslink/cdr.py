@@ -2,7 +2,7 @@
 finite-resolution phase interpolator, closing the loop on a real (oversampled)
 waveform.
 
-Pure array/scalar functions: no matplotlib, no file I/O. This is the Stage C
+Pure array/scalar functions that do not use matplotlib or file I/O. This is the Stage C
 cocotb golden model.
 """
 from __future__ import annotations
