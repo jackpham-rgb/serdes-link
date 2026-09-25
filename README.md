@@ -48,7 +48,7 @@ equalization, a CTLE, a DFE, and a bang-bang CDR. It closes the loop between
 | Stage | Status | Docs |
 |---|---|---|
 | A: Python link model | done | [docs/01-model.md](docs/01-model.md) |
-| B: PCB channel + measurement | not started | `pcb/` |
+| B: PCB channel + measurement | draft board designed, not yet fabricated | `pcb/` |
 | C: SystemVerilog + cocotb | done | [docs/03-rtl.md](docs/03-rtl.md) |
 | D: analog transistor sizing via ML | **out of scope, not planned** | `analog/` |
 
