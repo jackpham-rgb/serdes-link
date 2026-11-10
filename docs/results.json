@@ -1,0 +1,53 @@
+{
+  "bit_rate_gbps": 5.0,
+  "channel": "36 in FR4 microstrip (synthetic)",
+  "loss_at_nyquist_dB": -14.9,
+  "launch_Vppd": 1.0,
+  "ffe_deemphasis_dB": 3.5,
+  "ctle_zero_GHz": 1.32,
+  "ctle_peaking_dB": 5.5,
+  "dfe_taps_mV": [
+    -2.9,
+    1.9,
+    3.9,
+    6.2
+  ],
+  "noise_mV_rms": 1.0,
+  "rj_UI_rms": 0.015,
+  "target_ber": 1e-12,
+  "cdr_recovered_ppm": 199.0,
+  "steps": [
+    {
+      "step": "Raw channel",
+      "eye_height_mV": 0.0,
+      "eye_width_UI": 0.0,
+      "ber": 0.019011293305987387,
+      "sim_bit_errors": 89,
+      "sim_bits": 3700
+    },
+    {
+      "step": "+ TX FFE",
+      "eye_height_mV": 0.0,
+      "eye_width_UI": 0.0,
+      "ber": 4.574043171617676e-07,
+      "sim_bit_errors": 0,
+      "sim_bits": 3700
+    },
+    {
+      "step": "+ CTLE",
+      "eye_height_mV": 115.3,
+      "eye_width_UI": 0.34,
+      "ber": 3.394151069137217e-40,
+      "sim_bit_errors": 0,
+      "sim_bits": 3700
+    },
+    {
+      "step": "+ DFE",
+      "eye_height_mV": 126.5,
+      "eye_width_UI": 0.41,
+      "ber": 1.0774730728832403e-43,
+      "sim_bit_errors": 0,
+      "sim_bits": 3700
+    }
+  ]
+}
