@@ -20,7 +20,7 @@ import numpy as np
 import skrf as rf
 
 
-def make_synthetic_channel(out_path: str, length_m: float = 12 * 0.0254,
+def make_synthetic_channel(out_path: str, length_m: float = 36 * 0.0254,
                             freq_start_hz: float = 1e6, freq_stop_hz: float = 15e9,
                             n_points: int = 1001) -> rf.Network:
     freq = rf.Frequency(freq_start_hz / 1e9, freq_stop_hz / 1e9, n_points, unit="GHz")
@@ -55,6 +55,6 @@ def make_synthetic_channel(out_path: str, length_m: float = 12 * 0.0254,
 
 if __name__ == "__main__":
     out_dir = pathlib.Path(__file__).parent
-    out = out_dir / "synthetic_12in_channel.s4p"
+    out = out_dir / "synthetic_36in_channel.s4p"
     make_synthetic_channel(str(out))
     print(f"wrote {out}")
