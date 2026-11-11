@@ -1,8 +1,8 @@
-# Stage B: 12 inch test channel board
+# Test channel board
 
-A draft KiCad board for measuring a real channel with a VNA, to replace the
-synthetic channel in `data/touchstone/`. It has not been fabricated or
-measured yet.
+A KiCad board for measuring a real channel with a network analyzer (VNA), so a measured S-parameter file can replace the synthetic one in `data/touchstone/`. It is designed and passes all checks; it has not been fabricated or measured.
+
+Each line is 12 inches. The link model uses 36 inches, which three lines in series would give, or the 12 inch measurement can be scaled in loss per inch.
 
 ![Test channel board, 3D view](img/board_3d.png)
 
@@ -10,7 +10,7 @@ measured yet.
 
 | Item | Detail |
 |---|---|
-| Two 12 inch lines | 50 ohm microstrip on F.Cu, pad center to pad center, 20 mm apart. They stand in for the two uncoupled lines (TX+ to RX+, TX- to RX-) assumed by `make_synthetic_channel.py`. Ports: J1 TX+, J2 TX-, J3 RX+, J4 RX-, the same order the model uses. |
+| Two 12 inch lines | 50 ohm microstrip on F.Cu, pad center to pad center, 20 mm apart. They are the physical version of the two uncoupled lines (TX+ to RX+, TX- to RX-) in `make_synthetic_channel.py`. Ports: J1 TX+, J2 TX-, J3 RX+, J4 RX-, the same order the model uses. |
 | 1 inch thru | J5 to J6, with identical connectors and launches. Measuring it gives the connector and launch response, which can be de-embedded from the 12 inch results. |
 | Connectors | Six Amphenol 132289 edge-launch SMA connectors. |
 | Stackup | 4 layers, 1.6 mm. F.Cu carries the lines, In1.Cu is a solid ground reference, In2.Cu and B.Cu are ground. |
@@ -56,7 +56,7 @@ To regenerate:
 "C:/Program Files/KiCad/10.0/bin/python.exe" pcb/make_schematic.py
 ```
 
-## Next
+## Measuring it
 
 1. Confirm the trace width with the fab's calculator and order a small run.
 2. Measure the thru and both 12 inch lines with a VNA (SOLT calibrated at the
