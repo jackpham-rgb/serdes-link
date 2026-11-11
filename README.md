@@ -1,5 +1,7 @@
 # serdes-link
 
+[![CI](https://github.com/jackpham-rgb/serdes-link/actions/workflows/ci.yml/badge.svg)](https://github.com/jackpham-rgb/serdes-link/actions/workflows/ci.yml)
+
 A 5 Gb/s serial link, modeled from the transmitter to the recovered bits, with the digital parts rebuilt in SystemVerilog and checked against the model. [Portfolio page](https://jackpham-rgb.github.io/jack-portfolio/)
 
 ![The eye after each equalizer](docs/imgs/eye_steps.png)
