@@ -1,10 +1,8 @@
 # Power Integrity: Power-Supply-Induced Jitter (PSIJ)
 
-Workstream 1 of the PDN/power-integrity extension (see
-`career/p1-pdn-power-integrity.txt` in the planning repo, private): make
-supply noise a first-class term in the link model instead of leaving power
+Make supply noise a first-class term in the link model instead of leaving power
 as an unmodeled assumption. PDN target impedance/decoupling design and a
-VNA-measured PDN impedance overlay (workstreams 2-3) are not built yet.
+VNA-measured PDN impedance overlay are outside this model.
 
 ## Model
 
@@ -69,17 +67,16 @@ timing closure.
    pipeline's vertical eye height, the same metric `run_link.py` uses for
    the CTLE sweep. Result: noisy, non-monotonic numbers
    (0.0011, 0.0011, 0.0001, ... as ripple increased) that told me nothing.
-   The reason: this project's 12" FR4 channel already closes the eye
-   VERTICALLY almost entirely through ISI alone at this bit rate, before
-   any equalization; PSIJ's contribution was swamped by noise in a metric
-   that isn't sensitive to timing shifts in the first place (a signal
+   Two reasons. The vertical eye-height function I had then was itself
+   flawed: it counted the start-up dead time before the first bit arrives,
+   so it read near zero on any channel (see docs/01-model.md). And a
+   vertical metric isn't sensitive to timing shifts in the first place (a signal
    shifted slightly in TIME doesn't change what's sampled in a fixed
    VERTICAL band unless the shift is large enough to cross into a
    different symbol's amplitude). The fix was a new metric,
    `eye.crossing_jitter_ui`, that measures the HORIZONTAL spread of
    zero-crossings near a UI boundary instead -- the actual eye-diagram
-   quantity real jitter/TIE measurements use, and one that isn't
-   entangled with this channel's own severe ISI.
+   quantity real jitter/TIE measurements use.
 2. **A hidden one-sample delay in `tx.apply_ffe`, at the identity
    setting.** The first version of the isolated (no-channel) PSIJ demo
    built its TX waveform via `link.generate_tx_waveform(..., ffe=(0.0,

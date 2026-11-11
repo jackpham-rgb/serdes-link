@@ -1,9 +1,9 @@
-# Stage C: SystemVerilog + cocotb
+# The digital blocks in SystemVerilog
 
 ## Goal
 
 Reimplement the DFE and the CDR's digital loop filter in synthesizable
-SystemVerilog, and prove each one matches the Stage A Python model
+SystemVerilog, and prove each one matches the Python model
 (`dfe.py`, `cdr.py`) on the same input vectors, using cocotb to drive real
 Icarus Verilog simulations from Python. Also add a PRBS generator in RTL,
 since a real link needs a hardware pattern source, not just a Python one.
@@ -11,7 +11,7 @@ since a real link needs a hardware pattern source, not just a Python one.
 This stage deliberately does NOT try to reimplement `cdr.py`'s waveform
 resampling (`_sample_at`) in hardware. That function stands in for an
 analog front end (a real sampler and phase interpolator), which isn't
-digital logic. What Stage C implements is the actual digital control:
+digital logic. What the RTL implements is the actual digital control:
 the PRBS pattern, the DFE, and the CDR's phase-detector-to-correction loop
 filter.
 
@@ -35,16 +35,16 @@ filter.
    hardware.
 4. **`rtl/cdr_loop_filter.sv`**: the digital loop filter alone, in pure
    integer fixed point (see "Fixed-point design" below). No floats, no
-   dependency on `samples_per_ui` (that's a Stage-A-simulation-only
+   dependency on `samples_per_ui` (that's a simulation-only
    concept; real hardware only knows the phase interpolator's own step
    resolution).
 5. **`rtl/serdes_digital_top.sv`**: a flat-IO wrapper bundling all three,
-   as the eventual P2 (Tiny Tapeout) target.
+   sized for a small shuttle tapeout such as Tiny Tapeout.
 6. **cocotb testbenches** (`tests/rtl/test_*.py`): each one builds the
    relevant RTL with Icarus Verilog via cocotb's Python runner API
    (`cocotb_tools.runner`, no Makefile needed), drives it with real
    vectors, and compares against the matching golden model. They run as
-   ordinary pytest tests (`python -m pytest`) alongside the Stage A suite,
+   ordinary pytest tests (`python -m pytest`) alongside the Python tests,
    or standalone (`python tests/rtl/test_dfe.py`).
 
 ## Fixed-point design
@@ -56,7 +56,7 @@ so tap-update rounding isn't an extra source of RTL-vs-golden drift beyond
 sample/residual quantization itself.
 
 **CDR loop filter**: pure integer, no fractional-bit convention at all.
-`kp`/`ki` (Stage A's UI-scale float gains) are converted once, by
+`kp`/`ki` (the Python model's UI-scale float gains) are converted once, by
 `loop_filter_gains_fixed()`, into integers scaled so that 256 "subunits"
 equal one phase-interpolator step (1/64 of a UI by default). Concretely:
 `kp_fixed = round(kp * pi_steps_per_ui * 256)`. The RTL and the Python
@@ -66,8 +66,8 @@ copies of the same number that could silently drift apart.
 
 ## Results
 
-All three cocotb tests pass as part of the normal `pytest` run (18 tests
-total: 15 from Stage A, 3 RTL cosims):
+All three cocotb tests pass as part of the normal `pytest` run (43 tests
+total, 3 of them RTL cosimulations):
 
 - `prbs_gen` matches `serdeslink.prbs.prbs()` bit-for-bit across 2000 bits.
 - `dfe` agrees with `run_dfe()` on >99% of decisions across 4000 samples,
@@ -85,7 +85,7 @@ total: 15 from Stage A, 3 RTL cosims):
 | PRBS generator | `rtl/prbs_gen.sv` |
 | DFE | `rtl/dfe.sv` |
 | CDR digital loop filter | `rtl/cdr_loop_filter.sv` |
-| Flat-IO top (P2 target) | `rtl/serdes_digital_top.sv` |
+| Flat-IO top | `rtl/serdes_digital_top.sv` |
 | CDR fixed-point golden model | `src/serdeslink/cdr.py` (`loop_filter_gains_fixed`, `loop_filter_step_fixed`) |
 | cocotb testbenches | `tests/rtl/test_prbs_gen.py`, `test_dfe.py`, `test_cdr_loop_filter.py` |
 

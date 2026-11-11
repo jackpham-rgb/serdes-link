@@ -1,4 +1,4 @@
-# rtl/: Stage C (done)
+# rtl/
 
 SystemVerilog reimplementation of the PRBS generator, the DFE, and the
 CDR's digital loop filter, cosimulated against the Python golden models in
@@ -13,7 +13,7 @@ Files:
   waveform resampling `run_cdr()` does in Python), pure integer fixed
   point.
 - `serdes_digital_top.sv`: flat-IO wrapper bundling all three, the
-  eventual P2 (Tiny Tapeout) target.
+  sized for a small shuttle tapeout such as Tiny Tapeout.
 
 Requires [Icarus Verilog](https://github.com/steveicarus/iverilog) on your PATH and
 `cocotb` (in `requirements.txt`).

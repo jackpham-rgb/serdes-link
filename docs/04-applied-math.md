@@ -5,13 +5,10 @@ behind this repo's design choices *visible*, not just claimed. One block
 per result: the formula, the course/book it's from, the code that
 implements it, and the plot that proves it.
 
-Started with Workstream 1 (the optimal equalizer), Workstream 2
-(detection-theory BER), and Workstream 3 (a regression surrogate on sweep
-data). A Kalman-filter view of CDR phase tracking is a follow-on
-workstream, not yet built; see `career/p1-applied-math-extension.txt`
-(planning repo, private) for the roadmap.
+Three results: the optimal equalizer, the slicer as a detection problem,
+and a regression surrogate on sweep data.
 
-## Workstream 1: the optimal equalizer (MMSE / least squares / convex)
+## 1. The optimal equalizer (MMSE / least squares / convex)
 
 **Formula**
 
@@ -57,7 +54,7 @@ constraints), 16A/16B (linear algebra, normal equations).
   why the default solver was swapped out).
 
 `dfe.py`'s `run_dfe` was NOT changed. It already existed and already runs
-sign-sign LMS; this workstream shows what LMS is converging toward,
+sign-sign LMS; this section shows what LMS is converging toward,
 computed independently, next to it.
 
 **Result**
@@ -82,7 +79,7 @@ Reproduce: `python scripts/run_equalizer_opt.py`. Tests:
 matches the unconstrained optimum when the budget is loose, convex
 respects a binding budget and pays for it in fit error).
 
-## Workstream 2: the slicer is a MAP detector
+## 2. The slicer is a MAP detector
 
 **Formula**
 
@@ -152,12 +149,12 @@ shift, the derived threshold beats naive 0 under noise asymmetry, a
 brute-force grid-search cross-check for the no-closed-form case, and
 agreement with `bathtub` in the symmetric case).
 
-## Workstream 3: a regression surrogate on sweep data
+## 3. A regression surrogate on sweep data
 
 **Formula**
 
 `optimize.py` already fits eye height vs. a SINGLE swept variable (CTLE
-peaking) with a 1-D quadratic and solves for its vertex. Workstream 3
+peaking) with a 1-D quadratic and solves for its vertex. This section
 generalizes this to several settings at once:
 
 ```
@@ -201,7 +198,7 @@ EECS189 (regression, bias/variance, model capacity: Murphy's
 lengths (4-24 in) x 6 CTLE zero placements x 6 DFE tap counts (216 points
 total), it builds/loads the corresponding synthetic channel, runs
 TX -> channel -> CTLE -> DFE, and turns the post-DFE residual into
-`log10(BER)` via `ber.error_probability` (Workstream 2's own detection-
+`log10(BER)` via `ber.error_probability` (section 2's own detection-
 theory function, reused here as the sweep's target metric instead of
 inventing a new one: `mu = 1` since decisions are always +-1 by
 construction, `sigma` = the residual's spread around the actual decided
