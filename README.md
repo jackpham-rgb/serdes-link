@@ -51,7 +51,7 @@ Three design decisions mattered most:
 | + CTLE | 115 mV | 0.34 UI | < 1e-15 | 0 of 3700 |
 | + DFE | 126 mV | 0.41 UI | < 1e-15 | 0 of 3700 |
 
-UI means unit interval, the time of one bit (200 ps here). BER is bit error rate. The computed error rate for the raw channel (1.9%) agrees with counting errors in the simulated bits (2.4%).
+UI means unit interval, the time of one bit (200 ps here). BER is bit error rate. The computed error rate for the raw channel (1.9%) agrees with counting errors in the simulated bits (2.4%). The + DFE row uses ideal taps equal to the pulse-response postcursors; the taps that sign-sign LMS actually learns are in the DFE figure below.
 
 ![Channel loss and single-bit response](docs/imgs/channel.png)
 
@@ -67,7 +67,7 @@ The bathtub plot shows error rate against where in the bit the receiver samples.
 
 In RTL, the PRBS bit generator matches the Python model on all 2000 bits, the clock-recovery loop filter matches on every one of about 4000 steps, and the DFE agrees on over 99% of 4000 decisions. All three run in cocotb with Icarus Verilog.
 
-More detail: [link model](docs/01-model.md), [RTL](docs/03-rtl.md), [the math](docs/04-applied-math.md), [supply noise and jitter](docs/05-power-integrity.md).
+More detail: [spec](docs/00-spec.md), [link model](docs/01-model.md), [RTL](docs/03-rtl.md), [the math](docs/04-applied-math.md), [supply noise and jitter](docs/05-power-integrity.md).
 
 ## What broke and how I fixed it
 
@@ -96,7 +96,7 @@ scripts/          scripts that produce every figure and number
 rtl/              SystemVerilog: PRBS generator, DFE, CDR loop filter
 tests/            pytest unit tests and cocotb RTL testbenches
 data/touchstone/  the channel S-parameter file and its generator
-pcb/              KiCad test board: a 12 in line and a 1 in reference line
+pcb/              KiCad test board: two 12 in lines and a 1 in thru line
 docs/             write-ups, figures, results
 ```
 

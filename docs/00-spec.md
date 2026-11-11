@@ -13,7 +13,7 @@
 | Random jitter | 0.015 UI rms |
 | Target BER | 1e-12 |
 
-The bit rate was chosen so the channel's interesting frequency range (up to about three times Nyquist, 7.5 GHz) fits inside a low-cost 6 GHz network analyzer, which is what measuring the test board in `pcb/` would need.
+The bit rate was chosen so the channel's main frequency range fits a low-cost 6 GHz network analyzer, which measuring the test board in `pcb/` would need. Nyquist is 2.5 GHz, so 6 GHz reaches 2.4 times Nyquist.
 
 ## Block diagram
 

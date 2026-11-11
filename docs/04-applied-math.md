@@ -65,7 +65,7 @@ On a known 3-tap postcursor channel (`0.30, -0.15, 0.05`, noiseless so the
 optimum is exactly solvable), the settled sign-sign LMS taps
 (`0.2996, -0.1498, 0.0505`) match the closed-form MMSE solution
 (`0.3000, -0.1500, 0.0500`) to within LMS's own steady-state dither, not
-just the true channel value — this is the literal "LMS converges to MMSE"
+just the true channel value. This is the literal "LMS converges to MMSE"
 claim, checked directly rather than assumed. `ls_taps` agrees with
 `mmse_taps` to numerical precision. `convex_taps` with a loose budget
 reproduces the same optimum; with a budget tight enough to bind

@@ -12,7 +12,7 @@ Files:
 - `cdr_loop_filter.sv`: the CDR's digital loop filter only (not the
   waveform resampling `run_cdr()` does in Python), pure integer fixed
   point.
-- `serdes_digital_top.sv`: flat-IO wrapper bundling all three, the
+- `serdes_digital_top.sv`: flat-IO wrapper bundling all three,
   sized for a small shuttle tapeout such as Tiny Tapeout.
 
 Requires [Icarus Verilog](https://github.com/steveicarus/iverilog) on your PATH and
