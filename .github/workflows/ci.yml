@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+
+      - name: Install Icarus Verilog for the RTL cosimulations
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y iverilog
+
+      - name: Install the model and its requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Run the tests
+        run: python -m pytest -rs
+
+      - name: Regenerate the results table and check it did not change
+        run: |
+          python scripts/run_link.py
+          git diff --exit-code docs/results_table.md
+
+      - name: No em dashes in tracked text files
+        shell: python
+        run: |
+          import subprocess
+          import sys
+
+          names = subprocess.run(["git", "ls-files"], capture_output=True, text=True, check=True).stdout.splitlines()
+          bad = []
+          for name in names:
+              try:
+                  with open(name, encoding="utf-8") as f:
+                      lines = f.read().splitlines()
+              except (UnicodeDecodeError, OSError):
+                  continue
+              bad += [f"{name}:{n}" for n, line in enumerate(lines, 1) if "\u2014" in line]
+          print("\n".join(bad) if bad else "No em dashes found.")
+          sys.exit(1 if bad else 0)
