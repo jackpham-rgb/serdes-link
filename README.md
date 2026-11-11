@@ -84,7 +84,7 @@ Python 3.10 or newer, plus [Icarus Verilog](https://github.com/steveicarus/iveri
 python -m venv .venv && source .venv/bin/activate   # .venv\Scripts\activate on Windows
 pip install -r requirements.txt
 pip install -e .
-python -m pytest              # 43 tests, including 3 RTL cosimulations
+python -m pytest              # 43 tests; the 3 RTL cosimulations skip without Icarus Verilog
 python scripts/run_link.py    # regenerates the figures and results table above
 ```
 
