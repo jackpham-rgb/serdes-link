@@ -17,7 +17,9 @@ Each line is 12 inches. The link model uses 36 inches, which three lines in seri
 | Launch | Each line tapers from the 1.5 mm connector pad to the trace over 3 mm. In1.Cu is cleared under the pad and taper, so the wide pad does not load the launch. |
 | Shielding | A row of ground vias 1.2 mm from each side of every line, every 2 mm. |
 
-The schematic is `serdes_test_channel.kicad_sch`. It is six coaxial
+![Schematic](img/schematic.png)
+
+The schematic is `serdes_test_channel.kicad_sch` ([PDF](serdes_test_channel_schematic.pdf)). It is six coaxial
 connectors joined by three nets: `CH_P` (J1 to J3), `CH_M` (J2 to J4) and
 `THRU` (J5 to J6).
 
@@ -46,6 +48,8 @@ pours reach the board edge on purpose.
 |---|---|
 | `serdes_test_channel.kicad_pro`, `.kicad_sch`, `.kicad_pcb` | KiCad project, schematic and board |
 | `serdes_test_channel_gerbers.zip` | Gerbers and drill file for a fab |
+| `serdes_test_channel_schematic.pdf` | Schematic as a PDF |
+| `serdes_test_channel_bom.csv` | Parts list: six Amphenol 132289 edge-launch SMA connectors |
 | `make_test_channel_pcb.py`, `make_schematic.py` | Scripts that generate the board and schematic, run with KiCad's bundled Python |
 | `img/` | Schematic and 3D render |
 
