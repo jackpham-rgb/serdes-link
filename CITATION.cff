@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "serdes-link: a 5 Gb/s serial link model with SystemVerilog digital blocks"
+authors:
+  - family-names: Pham
+    given-names: Jack
+version: 0.1.0
+license: MIT
+repository-code: "https://github.com/jackpham-rgb/serdes-link"
+abstract: >-
+  A 5 Gb/s NRZ serial link modeled in Python from the transmitter to the
+  recovered bits (channel, TX FFE, CTLE, DFE, bang-bang CDR, statistical
+  eye and BER), with the PRBS generator, DFE, and CDR loop filter rebuilt
+  in SystemVerilog and checked against the model with cocotb.
+keywords:
+  - serdes
+  - signal integrity
+  - equalization
+  - clock and data recovery
+  - systemverilog
+  - cocotb
