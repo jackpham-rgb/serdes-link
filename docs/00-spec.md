@@ -1,75 +1,32 @@
-# Stage 0 - Spec
+# Spec
 
-## Bit rate and instrument target
+| Item | Value |
+|---|---|
+| Bit rate | 5 Gb/s NRZ, 200 ps per bit |
+| Channel | 36 in FR4 microstrip differential pair, synthetic (scikit-rf), 14.9 dB loss at 2.5 GHz |
+| Launch swing | 1 V peak-to-peak differential |
+| TX FFE | 2 taps, 3.5 dB de-emphasis |
+| CTLE | 1 zero (swept), poles at 3.5 and 7.5 GHz |
+| DFE | 4 taps, sign-sign LMS |
+| CDR | Bang-bang (Alexander) phase detector, two-path loop filter, 64-step phase interpolator |
+| Noise | 1 mV rms at the receiver input in a 5 GHz band |
+| Random jitter | 0.015 UI rms |
+| Target BER | 1e-12 |
 
-Rbit = **5 Gb/s NRZ** (UI = 200 ps). Chosen for LiteVNA-class (~6 GHz) VNA
-coverage: Nyquist = 2.5 GHz, and VNA coverage to roughly 3x Nyquist (~7.5
-GHz) is comfortably inside a ~6 GHz instrument's range with margin, per the
-project howto's "pick the rate from the instrument" rule. **This is
-provisional.** Stage A has no VNA yet (it runs entirely on a synthetic
-channel), so this number gets locked for real once a VNA is purchased and
-its actual max frequency is known (see `coop-plan.txt` in the planning repo).
-If the real instrument covers less than ~6 GHz, this drops to ~3-4 Gb/s
-before Stage B; the architecture doesn't change (`channel.load()` takes a
-path and nothing else).
-
-## Channel
-
-`data/touchstone/synthetic_12in_channel.s4p` is a synthetic 12" FR4
-microstrip differential pair (scikit-rf `MLine`, er=4.3, tan-delta=0.02, two
-identical uncoupled single-ended lines assembled into a 4-port file). This is
-a stand-in for a measured board, not a measurement. See
-`data/touchstone/make_synthetic_channel.py` for the exact parameters, and its
-docstring for the port-numbering convention (`channel.load()` assumes
-scikit-rf's `se2gmm(p=2)` native order: TX+, TX-, RX+, RX-).
+The bit rate was chosen so the channel's interesting frequency range (up to about three times Nyquist, 7.5 GHz) fits inside a low-cost 6 GHz network analyzer, which is what measuring the test board in `pcb/` would need.
 
 ## Block diagram
 
 ```
-PRBS15 -> NRZ -> TX FFE (1 precursor, 1 postcursor) -> finite-rise shaping
-        -> [channel: measured/synthetic SDD21, resampled + convolved]
-        -> CTLE (1 zero, 2 poles, swept for peaking) -> UI-center sampling
-        -> DFE (4-tap, sign-sign LMS)  |  CDR (bang-bang PD + PI loop filter)
-        -> eye / statistical BER (peak-distortion) / JTOL (linearized loop)
+PRBS15 -> NRZ -> TX FFE -> rise-time shaping -> channel -> CTLE -> sampler -> DFE -> bits
+                                                                      ^
+                                                                     CDR
 ```
 
-## The ML / optimization decision (recorded here so it isn't re-litigated)
+## Channel files
 
-Two different things both get called "ML," and only one of them is out of
-scope for this repo.
+`data/touchstone/synthetic_36in_channel.s4p` is two identical, uncoupled lossy microstrip lines (er = 4.3, loss tangent 0.02) written as a 4-port file. Port order is TX+, TX−, RX+, RX−, the order scikit-rf's mixed-mode conversion expects. A measured file in the same order drops in with no code change.
 
-**Out of scope, not planned:** ML that *designs or judges a circuit*, for
-example a model that proposes analog transistor sizes, or scores a layout.
-That's a real, separate research direction (it was the original idea for
-"Stage D" here), and it stays out of this repo: it would overpromise and
-isn't something I've built.
+## Scope
 
-**In scope, and used here:** applied math/optimization to *process signal
-and measurement data*. This repo doesn't just promise that, it does it:
-`src/serdeslink/analysis/optimize.py` fits a quadratic (ordinary least
-squares) to the CTLE peaking sweep and solves for its vertex, i.e. the
-continuous peaking value the *data* predicts is optimal, rather than only
-reporting the best of the handful of sampled points (see the CTLE sweep
-figure in docs/01-model.md). `src/serdeslink/analysis/equalizer_opt.py`
-goes further: it computes the closed-form MMSE/least-squares equalizer
-taps (`w* = R^-1 p`) next to `dfe.py`'s adaptive sign-sign LMS, shows LMS
-actually converges to that optimum, and adds a convex (cvxpy),
-budget-constrained version that expresses a real constraint (a TX
-tap-magnitude budget) neither closed form can. `optimal_threshold`/
-`error_probability` in `analysis/ber.py` name the slicer as a MAP detector
-and derive its optimal decision threshold from the likelihood ratio,
-showing a measurable BER improvement once the channel isn't perfectly
-symmetric. See docs/04-applied-math.md.
-That's the same kind of applied regression/optimization this project uses
-elsewhere (statistical BER, the DFE and CDR's adaptive loop math): read the
-numbers, fit or solve something, report the result. No part of it looks at
-or judges a circuit's layout. See the planning repo's
-`portfolio-projects-reference.txt` section 8 for the fuller reasoning; that
-file is private and not part of this public repo.
-
-## Honesty line
-
-This is a link model plus a synthetic channel (a real measured channel is
-Stage B) plus digital control RTL cosimulated against that model (Stage C,
-see docs/03-rtl.md). It is not a full-rate SerDes PHY tapeout, and the RTL
-has not run on real silicon or an FPGA yet.
+The repo applies regression and optimization to simulated signal data: fitting the CTLE sweep, solving for the optimal equalizer taps, choosing the slicer threshold, and a surrogate model of BER (see `04-applied-math.md`). Machine learning that designs or judges a circuit, such as sizing transistors, is outside this project.
