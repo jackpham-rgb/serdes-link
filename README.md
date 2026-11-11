@@ -1,99 +1,108 @@
 # serdes-link
 
-A high-speed serial link, modeled end to end in Python: a lossy channel, TX
-equalization, a CTLE, a DFE, and a bang-bang CDR. It closes the loop between
-"here's a closed eye" and "here's what each stage bought back."
+A 5 Gb/s serial link, modeled from the transmitter to the recovered bits, with the digital parts rebuilt in SystemVerilog and checked against the model. [Portfolio page](https://jackpham-rgb.github.io/jack-portfolio/)
 
-![Closed eye](docs/imgs/closed_eye.png)
+![The eye after each equalizer](docs/imgs/eye_steps.png)
 
-## What's here (Stage A + Stage C)
+## Goal and specs
 
-- `src/serdeslink/channel.py`: loads a 4-port Touchstone file and extracts
-  the differential-mode impulse response (DC-extrapolated, causality-checked).
-- `src/serdeslink/prbs.py`, `tx.py`: PRBS15 -> NRZ -> FFE -> pulse shaping.
-- `src/serdeslink/ctle.py`: single-zero/two-pole CTLE, swept for peaking.
-- `src/serdeslink/dfe.py`: 4-tap sign-sign LMS DFE (pure array function; this
-  becomes the Stage C cocotb golden model).
-- `src/serdeslink/cdr.py`: closed-loop bang-bang (Alexander) CDR. Phase
-  detector, 2nd-order digital loop filter, and finite-resolution PI, run
-  bit-level on an oversampled waveform with an injected ppm offset.
-- `src/serdeslink/analysis/`: eye diagrams, statistical BER (peak-distortion
-  method, plus `optimal_threshold`/`error_probability`: the slicer named
-  as a MAP detector, with its decision threshold derived from the
-  likelihood ratio instead of assumed to be 0), JTOL (linearized loop
-  model), `optimize.py` (fits the CTLE sweep and solves for its continuous
-  optimum), `equalizer_opt.py` (closed-form MMSE/least-squares equalizer
-  taps next to `dfe.py`'s adaptive LMS, plus a convex,
-  tap-budget-constrained version via cvxpy), and `surrogate.py` (a
-  multivariate regression surrogate of log10(BER) vs. channel length/CTLE
-  zero/DFE taps: polynomial regression, then XGBoost for what a
-  fixed-degree polynomial can't fit, with feature importances read as
-  design intuition; see [docs/04-applied-math.md](docs/04-applied-math.md)).
-  Applied optimization on measurement/signal data, not ML that designs a
-  circuit; see the honesty line.
-- Currently runs on a **synthetic** channel (`data/touchstone/`, scikit-rf
-  FR4 microstrip). Stage B swaps in a real measured channel with zero code
-  changes to `channel.load()`.
-- `rtl/`: SystemVerilog reimplementation of the PRBS generator, the DFE, and
-  the CDR's digital loop filter, cosimulated against the Python golden
-  models above via cocotb + Icarus Verilog.
-- Power-supply-induced jitter (PSIJ): `tx.apply_supply_jitter` turns supply
-  ripple into edge-timing jitter, `analysis/eye.py::crossing_jitter_ui`
-  measures the resulting horizontal eye closure, and `analysis/jitter.py`
-  ties it to the CDR's own loop bandwidth (tracked out below it, closes
-  the eye above it); see [docs/05-power-integrity.md](docs/05-power-integrity.md).
+Send 5 billion bits per second down 36 inches of ordinary circuit-board trace and still read every bit correctly at the far end.
 
-## Stages
+That sounds easy until you look at what the trace does. A long trace passes slow changes well and fast changes badly, so each bit smears into the bit slots after it. I learned this smearing has a name, inter-symbol interference, or ISI, and that is what I call it from here on.
 
-| Stage | Status | Docs |
+The standard way to see ISI is to overlay thousands of received bits on one screen. If the ones and zeros stay apart, there is an open gap in the middle that looks like an eye. That picture is called an eye diagram. A closed eye means the receiver cannot tell a one from a zero.
+
+| Spec | Target | Result |
 |---|---|---|
-| A: Python link model | done | [docs/01-model.md](docs/01-model.md) |
-| B: PCB channel + measurement | draft board designed, not yet fabricated | `pcb/` |
-| C: SystemVerilog + cocotb | done | [docs/03-rtl.md](docs/03-rtl.md) |
-| D: analog transistor sizing via ML | **out of scope, not planned** | `analog/` |
+| Bit rate | 5 Gb/s, two-level (NRZ) | 5 Gb/s |
+| Channel | 36 in FR4 microstrip, synthetic | 14.9 dB loss at 2.5 GHz |
+| Bit error rate | below 1e-12 | below 1e-15 (computed) |
+| Eye opening at 1e-12 | open | 126 mV tall, 0.41 of a bit wide |
+| Clock offset tolerated | 200 ppm | locks and tracks 200 ppm |
+| RTL matches the model | bit for bit | PRBS and clock-recovery filter exact, DFE over 99% of decisions |
 
-That's a specific, deliberate boundary, not a blanket "no ML": this repo
-already uses applied optimization to process measurement data (see
-`src/serdeslink/analysis/optimize.py` and the honesty line below). What's
-out of scope is ML that designs or judges a circuit's layout.
-
-Spec and decisions: [docs/00-spec.md](docs/00-spec.md).
-
-## Quickstart
+## How it works
 
 ```
-python -m venv .venv && source .venv/bin/activate   # or .venv\Scripts\activate on Windows
+bits -> TX FFE -> channel -> CTLE -> sampler -> DFE -> bits
+                                        ^
+                                       CDR (finds when to sample)
+```
+
+Each block fixes the smearing in a different way. These are the names engineers use, so I use them too.
+
+- **TX FFE** (feed-forward equalizer). The transmitter sends each bit a little weaker when it repeats the bit before it. This is called de-emphasis. I use the common 3.5 dB setting.
+- **CTLE** (continuous-time linear equalizer). An amplifier at the receiver that boosts fast changes more than slow ones, undoing the trace's loss. The amount of boost is called peaking.
+- **DFE** (decision-feedback equalizer). Once the receiver has decided a bit, it knows how that bit will smear into the next four, so it subtracts that smear. The four weights are called taps, and they tune themselves with a rule called sign-sign LMS.
+- **CDR** (clock and data recovery). The receiver has no clock wire from the transmitter. It watches where the signal crosses zero and steers its own sampling clock to match. Mine is the bang-bang type, which only asks "early or late?" each bit.
+
+Three design decisions mattered most:
+
+1. **Pick a channel that needs the equalizers.** At 12 inches the eye is already open at this speed, so there was nothing to fix. At 36 inches the raw eye is closed.
+2. **Measure the eye statistically.** Simulating enough bits to see one error in a trillion is not practical. Instead the model takes the response to one bit, works out every way neighboring bits can add up, and computes the error rate directly. This is called a statistical eye.
+3. **Choose CTLE peaking by sweep.** Too little leaves ISI. Too much amplifies noise. The sweep finds the setting with the tallest eye.
+
+## Results
+
+| Step | Eye height at 1e-12 | Eye width at 1e-12 | BER at eye center | Bit errors in simulation |
+|---|---|---|---|---|
+| Raw channel | 0 mV | 0.00 UI | 2e-02 | 89 of 3700 |
+| + TX FFE | 0 mV | 0.00 UI | 5e-07 | 0 of 3700 |
+| + CTLE | 115 mV | 0.34 UI | < 1e-15 | 0 of 3700 |
+| + DFE | 126 mV | 0.41 UI | < 1e-15 | 0 of 3700 |
+
+UI means unit interval, the time of one bit (200 ps here). BER is bit error rate. The computed error rate for the raw channel (1.9%) agrees with counting errors in the simulated bits (2.4%).
+
+![Channel loss and single-bit response](docs/imgs/channel.png)
+
+![CTLE peaking sweep](docs/imgs/ctle_sweep.png)
+
+![Bathtub curves](docs/imgs/bathtub.png)
+
+The bathtub plot shows error rate against where in the bit the receiver samples. A wider flat bottom means more room for clock error.
+
+![DFE taps](docs/imgs/dfe_taps.png)
+
+![Jitter tolerance and CDR lock](docs/imgs/jtol_and_lock.png)
+
+In RTL, the PRBS bit generator matches the Python model on all 2000 bits, the clock-recovery loop filter matches on every one of about 4000 steps, and the DFE agrees on over 99% of 4000 decisions. All three run in cocotb with Icarus Verilog.
+
+More detail: [link model](docs/01-model.md), [RTL](docs/03-rtl.md), [the math](docs/04-applied-math.md), [supply noise and jitter](docs/05-power-integrity.md).
+
+## What broke and how I fixed it
+
+- **The eye looked closed when it was open.** My eye-height measurement included the dead time before the first bit arrives, so it read zero on an open eye. I caught it when the 12 inch plot plainly showed an open eye next to a number saying closed. The measurement now skips start-up and samples at the eye center.
+- **Wrong port order gave a silent zero.** The channel file listed ports in an order the conversion did not expect, and the loss came out as exactly zero with no error. A test against two uncoupled lines caught it.
+- **Feedback with the wrong sign.** Both the DFE update and the CDR loop were first written as positive feedback. The DFE tap ran away; the CDR drifted to the edge of the eye from any starting point.
+- **A testbench race.** Reading a registered output right after the clock edge returned the old value. Reading after the falling edge fixed it.
+
+## Reproduce it
+
+Python 3.10 or newer, plus [Icarus Verilog](https://github.com/steveicarus/iverilog) for the RTL tests.
+
+```bash
+python -m venv .venv && source .venv/bin/activate   # .venv\Scripts\activate on Windows
 pip install -r requirements.txt
 pip install -e .
-python -m pytest                       # 40 tests: 37 Python (Stage A + applied math + PSIJ) + 3 RTL cosims (Stage C)
-python scripts/run_link.py             # regenerates every Stage A figure in docs/imgs/
-python scripts/run_equalizer_opt.py    # regenerates the LMS vs. MMSE vs. convex figure
-python scripts/run_ber_threshold.py    # regenerates the MAP-optimal threshold figure
-python scripts/sweep_and_fit.py        # regenerates the regression-surrogate fit figure
-python scripts/run_psij.py             # regenerates the PSIJ eye-closure and spectrum figures
+python -m pytest              # 43 tests, including 3 RTL cosimulations
+python scripts/run_link.py    # regenerates the figures and results table above
 ```
 
-Stage C's RTL tests also need [Icarus Verilog](https://github.com/steveicarus/iverilog)
-on your PATH (`scoop install iverilog` on Windows, `apt install iverilog`
-or `brew install icarus-verilog` elsewhere).
+## Repo layout
 
-## Honesty line
+```
+src/serdeslink/   the link model: channel, TX, CTLE, DFE, CDR, analysis
+scripts/          scripts that produce every figure and number
+rtl/              SystemVerilog: PRBS generator, DFE, CDR loop filter
+tests/            pytest unit tests and cocotb RTL testbenches
+data/touchstone/  the channel S-parameter file and its generator
+pcb/              KiCad test board: a 12 in line and a 1 in reference line
+docs/             write-ups, figures, results
+```
 
-This is a link model plus a synthetic FR4 channel (a real measured channel
-is Stage B) plus digital control RTL cosimulated against that model
-(Stage C). It is **not** a full-rate SerDes PHY tapeout, and the RTL has
-never run on real silicon or an FPGA (that's P2 and P7). ML/optimization
-framing: this repo uses applied math/optimization to process signal and
-measurement data (see `analysis/optimize.py`'s CTLE-sweep fit); it does
-**not** use ML to design or judge a circuit's layout, and that's a
-deliberate boundary, not something postponed. See `docs/00-spec.md`.
+## Limits and next revision
 
-## Status
-
-Stage A complete: channel model, TX, CTLE sweep, DFE convergence, CDR lock
-acquisition (bit-level) and JTOL (linearized), and a statistical bathtub.
-Stage C complete: PRBS generator, DFE, and CDR digital loop filter in
-SystemVerilog, cosimulated against the Stage A golden models via cocotb.
-All of it (Python figures + RTL cosim) is regenerated/verified by one
-script and one `pytest` run respectively. Next: a real measured channel
-(Stage B) once a VNA is in hand.
+- The channel is a synthetic model, not a measurement. The test board in `pcb/` is designed and passes design-rule checks but has not been fabricated.
+- This is a model plus verified digital blocks. It has not run on an FPGA or silicon.
+- The DFE adds little here because the CTLE already removes most of the smear. A lossier channel would show it better.
+- Next revision: measure a real trace, and tighten the DFE check to bit-exact with a fixed-point reference model.
