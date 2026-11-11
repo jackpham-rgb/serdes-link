@@ -42,7 +42,7 @@ for k, (ref, netname, note) in enumerate(PARTS):
     body.append(f'	(wire (pts (xy {X} {Y+5.08}) (xy {X} {Y+12.7})) (stroke (width 0) (type default)) (uuid "{u()}"))')
     body.append(f'	(label "GND" (at {X} {Y+12.7} 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "{u()}"))')
     body.append(f'	(text "{note}" (at {X} {Y-11.43} 0) (effects (font (size 1.27 1.27))) (uuid "{u()}"))')
-body.append(f'	(text "SerDes Link Stage B test channel: 12 in uncoupled pair (J1-J3, J2-J4) and 1 in thru (J5-J6)" (at 25.4 25.4 0) (effects (font (size 2 2)) (justify left)) (uuid "{u()}"))')
+body.append(f'	(text "SerDes Link test channel: 12 in uncoupled pair (J1-J3, J2-J4) and 1 in thru (J5-J6)" (at 25.4 25.4 0) (effects (font (size 2 2)) (justify left)) (uuid "{u()}"))')
 sch = f'''(kicad_sch
 	(version 20250114)
 	(generator "eeschema")

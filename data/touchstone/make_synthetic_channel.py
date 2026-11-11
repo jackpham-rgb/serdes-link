@@ -1,6 +1,6 @@
 """Synthetic 4-port differential-channel Touchstone generator (scikit-rf).
 
-Stand-in for a real measured board (Stage B / P5 in the master reference).
+Stand-in for a real measured board.
 Builds a differential channel as two identical, UNCOUPLED, lossy microstrip
 lines (TX+ -> RX+ and TX- -> RX-) on FR4-like dielectric, assembled into a
 4-port single-ended file with port order (1=TX+, 2=TX-, 3=RX+, 4=RX-). This

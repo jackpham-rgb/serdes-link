@@ -103,7 +103,7 @@ def demo_psij_eye_sweep(samples_per_ui: int, ui_sec: float, ripple_mv_list,
     empirically to be large enough on this project's 12" FR4 channel
     (~0.4 UI of baseline crossing spread from ISI alone) that it swamps a
     clean PSIJ-only demonstration; the isolated (no-channel) case is the
-    one this workstream validates against the Kvs model, and is why it's
+    one this module validates against the Kvs model, and is why it's
     the default. See docs/05-power-integrity.md.
 
     Returns
@@ -152,7 +152,7 @@ def demo_psij_spectrum(samples_per_ui: int, ui_sec: float, ripple_mv: float,
     frequency is inside the loop's tracking bandwidth, `phase_ui` should
     show a spur at `ripple_freq_hz`: the loop visibly chasing the supply
     ripple, exactly the "PSIJ shows up as a DJ spur" effect the ripple/PDN
-    workstream is about.
+    analysis is about.
 
     Returns
     -------

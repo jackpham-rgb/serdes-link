@@ -1,4 +1,4 @@
-"""Applied-math extension, Workstream 1: compare the DFE's adaptive
+"""Compare the DFE's adaptive
 sign-sign LMS taps against the closed-form MMSE/least-squares optimum and a
 budget-constrained convex solution, on a known multi-tap postcursor
 channel.

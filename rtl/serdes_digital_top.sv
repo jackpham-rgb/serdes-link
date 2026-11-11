@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
-// serdes_digital_top: flat-IO wrapper bundling the three Stage C blocks
-// behind one clock, for a future Tiny Tapeout (P2) submission.
+// serdes_digital_top: flat-IO wrapper bundling the three digital blocks
+// behind one clock, sized for a small shuttle tapeout such as Tiny Tapeout.
 //
 // This is deliberately NOT a full SerDes PHY: it's the digital control
 // pieces (PRBS reference pattern, the DFE, and the CDR digital loop

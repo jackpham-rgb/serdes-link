@@ -1,4 +1,4 @@
-"""Applied-math extension, Workstream 3: generate a multivariate sweep of
+"""Generate a multivariate sweep of
 the link (channel length, CTLE zero placement, DFE tap count) and fit a
 regression surrogate of log10(BER), instead of only ever reading BER off a
 single-variable sweep the way the CTLE-only fit in optimize.py does.
@@ -42,7 +42,7 @@ def run_one(length_in: float, zero_hz: float, n_taps: int, channel_cache: dict) 
     """One point of the sweep: build (or reuse) the channel at this length,
     drive it, equalize, run the DFE, and turn the post-DFE residual into a
     log10(BER) estimate via `ber.error_probability` -- the same detection-
-    theory machinery Workstream 2 added, reused here as the sweep's target
+    theory machinery in analysis/ber.py, reused here as the sweep's target
     metric instead of inventing a new one."""
     length_key = round(length_in, 3)
     if length_key not in channel_cache:

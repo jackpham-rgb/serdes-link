@@ -57,7 +57,7 @@ def test_zero_ppm_stays_near_initial_phase():
 
 
 def test_fixed_point_loop_filter_tracks_float_run_cdr():
-    """The Stage C RTL (cdr_loop_filter.sv) only implements the digital loop
+    """The RTL (cdr_loop_filter.sv) only implements the digital loop
     filter, not the waveform resampling run_cdr() does. This test replays
     run_cdr()'s REAL pd_out sequence (from actual bang-bang PD decisions on
     a real waveform) through the pure fixed-point model and checks the two

@@ -1,6 +1,6 @@
 """Decision-feedback equalizer with sign-sign LMS tap adaptation.
 
-Pure array function that does not use matplotlib or file I/O. This is what Stage C
+Pure array function that does not use matplotlib or file I/O. This is what rtl/dfe.sv
 reimplements in SystemVerilog and cosimulates against via cocotb, so its
 inputs/outputs stay plain arrays on purpose.
 """
@@ -20,7 +20,7 @@ def run_dfe(samples: np.ndarray, n_taps: int = 4, mu: float = 1e-3,
     taps_history : ndarray, shape (len(samples), n_taps)
     residual : ndarray, the value actually seen by the slicer AFTER feedback
         cancellation. Plot THIS for the "opened" eye, never the raw channel
-        eye (see common failure mode notes in the project howto).
+        eye.
     """
     n = len(samples)
     taps = np.zeros(n_taps) if init_taps is None else np.asarray(init_taps, dtype=float).copy()

@@ -1,5 +1,5 @@
 """cocotb testbench for rtl/prbs_gen.sv, compared bit-for-bit against
-serdeslink.prbs.prbs() (the Stage A golden model).
+serdeslink.prbs.prbs() (the Python golden model).
 
 Run directly (builds + simulates with Icarus, then runs the cocotb test
 below inside it): `python test_prbs_gen.py`

@@ -1,5 +1,5 @@
 """cocotb testbench for rtl/cdr_loop_filter.sv, compared bit-for-bit against
-serdeslink.cdr.loop_filter_step_fixed() (the Stage C fixed-point golden
+serdeslink.cdr.loop_filter_step_fixed() (the fixed-point golden
 model) on a REAL phase-detector sequence taken from an actual run_cdr()
 bang-bang lock (not a synthetic dummy pattern).
 

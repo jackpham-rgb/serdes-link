@@ -1,4 +1,4 @@
-"""Applied-math extension, Workstream 2: name the slicer as a MAP detector,
+"""Name the slicer as a MAP detector,
 derive its optimal decision threshold from the likelihood ratio, and show
 it beats the naive threshold=0 assumption once the channel isn't perfectly
 symmetric (asymmetric levels, or asymmetric noise).

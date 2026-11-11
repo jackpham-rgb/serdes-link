@@ -1,4 +1,4 @@
-"""PDN / power-integrity workstream 1: power-supply-induced jitter (PSIJ).
+"""Power-supply-induced jitter (PSIJ).
 Show supply ripple turning into edge timing jitter (validated against the
 Kvs model), a tracked spur in the CDR's own phase-correction spectrum when
 the ripple is inside the loop bandwidth, and the eye closing as ripple

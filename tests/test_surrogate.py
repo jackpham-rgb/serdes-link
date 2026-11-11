@@ -30,7 +30,7 @@ def test_polynomial_surrogate_recovers_known_quadratic():
 
 
 def test_xgboost_beats_polynomial_on_a_function_no_quadratic_can_fit():
-    """The actual Workstream 3 claim: a fixed-degree polynomial underfits a
+    """The main surrogate claim: a fixed-degree polynomial underfits a
     genuinely non-quadratic response surface, while a more flexible model
     (XGBoost) captures it. Uses a function with a sharp local feature (a
     narrow bump) that a global quadratic cannot represent, regardless of

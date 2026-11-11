@@ -2,8 +2,8 @@
 finite-resolution phase interpolator, closing the loop on a real (oversampled)
 waveform.
 
-Pure array/scalar functions that do not use matplotlib or file I/O. This is the Stage C
-cocotb golden model.
+Pure array/scalar functions that do not use matplotlib or file I/O. This is the cocotb
+golden model for the RTL.
 """
 from __future__ import annotations
 
@@ -97,19 +97,19 @@ def run_cdr(waveform: np.ndarray, samples_per_ui: int, ppm: float = 0.0,
     return phase_ui, data_bits, pd_out
 
 
-# ── Stage C fixed-point golden model (cdr_loop_filter.sv) ──────────────────
+# ── Fixed-point golden model (cdr_loop_filter.sv) ──────────────────
 #
 # run_cdr() above mixes two things that don't both belong in digital RTL:
 # resampling a continuous waveform (that's the analog front end's job in
 # real hardware) and the digital loop filter that turns a phase-detector
 # reading into a phase-interpolator correction (that IS real digital logic,
-# and is what Stage C implements in SystemVerilog). The functions below are
+# and is what rtl/ implements in SystemVerilog). The functions below are
 # the digital loop filter ALONE, in pure fixed-point integer arithmetic, so
 # they can be compared bit-for-bit against the RTL in a cocotb testbench.
 #
 # Units: everything is in integer "subunits", where PI_SUBSTEPS subunits
 # make one phase-interpolator step (1/pi_steps_per_ui of a UI). This keeps
-# the RTL free of `samples_per_ui`, which is a Stage-A-simulation-only
+# the RTL free of `samples_per_ui`, which is a simulation-only
 # concept (how finely the waveform happens to be oversampled in software) -
 # real hardware has no such number, only the PI's own step resolution.
 PI_SUBSTEPS = 256

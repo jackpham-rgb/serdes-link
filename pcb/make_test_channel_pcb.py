@@ -1,4 +1,4 @@
-"""Generate the Stage B test-channel board with KiCad's Python API (pcbnew).
+"""Generate the test-channel board with KiCad's Python API (pcbnew).
 
 Run with KiCad's bundled Python:
 
@@ -200,7 +200,7 @@ text("RX-  (P4)", BOARD_L - 14, LINE_Y[1] - 5)
 text("12 in, 50 ohm microstrip, uncoupled pair", BOARD_L / 2, LINE_Y[0] + 4)
 text("12 in, 50 ohm microstrip, uncoupled pair", BOARD_L / 2, LINE_Y[1] + 4)
 text("1 in thru (de-embedding)", 15.2, THRU_Y - 8)
-text("SerDes Link Stage B test channel  rev A", BOARD_L / 2, BOARD_H - 1.5, 1.2)
+text("SerDes Link test channel  rev A", BOARD_L / 2, BOARD_H - 1.5, 1.2)
 
 filler = pcbnew.ZONE_FILLER(board)
 filler.Fill(board.Zones())

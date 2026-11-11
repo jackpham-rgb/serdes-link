@@ -1,5 +1,5 @@
 """cocotb testbench for rtl/dfe.sv, compared against serdeslink.dfe.run_dfe()
-(the Stage A golden model) run on the SAME quantized inputs.
+(the Python golden model) run on the SAME quantized inputs.
 
 Methodology: quantize the test samples to the RTL's fixed-point format
 first, then run the Python golden model on those quantized-and-back-to-
