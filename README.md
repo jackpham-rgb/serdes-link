@@ -74,6 +74,14 @@ More detail: [spec](docs/00-spec.md), [link model](docs/01-model.md), [RTL](docs
 - **Feedback with the wrong sign.** Both the DFE update and the CDR loop were first written as positive feedback. The DFE tap ran away; the CDR drifted to the edge of the eye from any starting point.
 - **A testbench race.** Reading a registered output right after the clock edge returned the old value. Reading after the falling edge fixed it.
 
+## The test board
+
+To check the model against a real trace, I designed a board to measure. It has two 12 in lines, one for each half of the differential pair, and a 1 in line. The short line is called a thru. Measuring it lets me subtract what the connectors add, so only the trace is left. I learned this is called de-embedding.
+
+![Test board, 3D render from KiCad](pcb/img/board_3d.png)
+
+[Schematic (PDF)](pcb/serdes_test_channel_schematic.pdf), [bill of materials](pcb/serdes_test_channel_bom.csv), and the full design are in [`pcb/`](pcb/).
+
 ## Reproduce it
 
 Python 3.10 or newer, plus [Icarus Verilog](https://github.com/steveicarus/iverilog) for the RTL tests.
@@ -104,3 +112,11 @@ docs/             write-ups, figures, results
 - This is a model plus verified digital blocks. It has not run on an FPGA or silicon.
 - The DFE adds little here because the CTLE already removes most of the smear. A lossier channel would show it better.
 - Next revision: measure a real trace, and tighten the DFE check to bit-exact with a fixed-point reference model.
+
+## Watch it work
+
+The same bits go down the same trace four times, with one more equalizer switched on each time. On the left, the gray square wave is what was sent and the blue curve is what arrives. Each dot is where the receiver decides 1 or 0, and red dots are wrong reads. On the right, every received bit is stacked on top of the others. The gap in the middle is the eye: the bigger it is, the more room the receiver has before it reads a bit wrong.
+
+![Animation: the eye opening as each equalizer is added](docs/imgs/link_animation.gif)
+
+Made with `python scripts/make_animation.py`, using the same simulation as the results above.
