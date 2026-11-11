@@ -25,11 +25,7 @@ The standard way to see ISI is to overlay thousands of received bits on one scre
 
 ## How it works
 
-```
-bits -> TX FFE -> channel -> CTLE -> sampler -> DFE -> bits
-                                        ^
-                                       CDR (finds when to sample)
-```
+![Block diagram](docs/imgs/block_diagram.png)
 
 Each block fixes the smearing in a different way. These are the names engineers use, so I use them too.
 
