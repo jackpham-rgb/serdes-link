@@ -236,6 +236,7 @@ def main():
     ax.set_ylim(1e-18, 1); ax.set_xlabel("sampling phase (UI from eye center)"); ax.set_ylabel("BER")
     ax.set_title("Bathtub: how far the sampling clock can drift", loc="left")
     ax.legend()
+    ax.tick_params(axis="y", which="both", labelfontfamily="DejaVu Sans")
     fig.savefig(IMG_DIR / "bathtub.png"); plt.close(fig)
 
     taps, taps_hist, cursors = dfe_info
@@ -286,6 +287,7 @@ def main():
     slope = np.polyfit(np.arange(2000, 4000 - 2), phase_ui[2000:], 1)[0]
     axes[1].set_xlabel("bits"); axes[1].set_ylabel("phase correction (UI)")
     axes[1].set_title(f"CDR tracks a 200 ppm offset ({slope*1e6:.0f} ppm recovered)", loc="left")
+    axes[0].tick_params(which="both", labelfontfamily="DejaVu Sans")
     fig.savefig(IMG_DIR / "jtol_and_lock.png"); plt.close(fig)
 
     summary = {
