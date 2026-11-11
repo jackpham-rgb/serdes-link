@@ -31,8 +31,13 @@ def fit_optimal_peaking(peaking_db, eye_height):
     y = np.asarray(eye_height, dtype=float)
     coeffs = np.polyfit(x, y, deg=2)
     a, b, c = coeffs
-    if a >= 0:
+    # Curvature that is only rounding noise (a straight line fits with a
+    # within ~1e-12 of zero, of either sign) is not a peak.
+    span = float(np.ptp(x)) or 1.0
+    if a >= -1e-9 * (abs(b) * span + abs(c) + 1e-300) / span:
         return None, None, coeffs
     x_opt = -b / (2 * a)
+    if not (x.min() <= x_opt <= x.max()):
+        return None, None, coeffs
     y_opt = a * x_opt ** 2 + b * x_opt + c
     return float(x_opt), float(y_opt), coeffs
