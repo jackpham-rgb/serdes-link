@@ -26,7 +26,7 @@ ROWS = [  # (left ref, left note, right ref, right note, net, line description)
 ]
 ROOT = u()
 body = []
-XL, XR = 50.8, 200.66
+XL, XR = 22.86, 132.08
 
 
 def connector(ref, note, X, Y, mirror):
@@ -37,7 +37,7 @@ def connector(ref, note, X, Y, mirror):
 		(exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (dnp no)
 		(uuid "{u()}")
 		(property "Reference" "{ref}" (at {X} {Y-6.35} 0) (effects (font (size 1.27 1.27))))
-		(property "Value" "SMA edge launch" (at {X} {Y+15.24} 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "SMA edge launch" (at {X} {Y+13.97} 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Connector_Coaxial:SMA_Amphenol_132289_EdgeMount" (at {X} {Y} 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at {X} {Y} 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "{u()}"))
@@ -46,27 +46,26 @@ def connector(ref, note, X, Y, mirror):
 	)''')
     body.append(f'	(wire (pts (xy {X} {Y+5.08}) (xy {X} {Y+10.16})) (stroke (width 0) (type default)) (uuid "{u()}"))')
     body.append(f'	(label "GND" (at {X} {Y+10.16} 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "{u()}"))')
-    body.append(f'	(text "{note}" (at {X} {Y-10.16} 0) (effects (font (size 1.5 1.5) bold)) (uuid "{u()}"))')
+    body.append(f'	(text "{note}" (at {X} {Y-9.53} 0) (effects (font (size 1.8 1.8) bold)) (uuid "{u()}"))')
     return pin_x
 
 
 for k, (lref, lnote, rref, rnote, net, desc) in enumerate(ROWS):
-    Y = 63.5 + 40.64 * k
+    Y = 50.8 + 29.21 * k
     x1 = connector(lref, lnote, XL, Y, mirror=True)
     x2 = connector(rref, rnote, XR, Y, mirror=False)
     body.append(f'	(wire (pts (xy {x1} {Y}) (xy {x2} {Y})) (stroke (width 0) (type default)) (uuid "{u()}"))')
     body.append(f'	(label "{net}" (at {x1 + 7.62} {Y} 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "{u()}"))')
-    body.append(f'	(text "{desc}" (at {(x1 + x2) / 2} {Y + 3.81} 0) (effects (font (size 1.27 1.27))) (uuid "{u()}"))')
-body.append(f'	(text "SerDes Link test channel" (at 25.4 25.4 0) (effects (font (size 2.5 2.5) bold) (justify left)) (uuid "{u()}"))')
-body.append(f'	(text "J1-J3 and J2-J4 are the two halves of the differential channel, measured as a 4-port in the order TX+, TX-, RX+, RX-." (at 25.4 33.02 0) (effects (font (size 1.5 1.5)) (justify left)) (uuid "{u()}"))')
-body.append(f'	(text "J5-J6 is the thru line, measured to remove the connector and launch from the 12 in results." (at 25.4 38.1 0) (effects (font (size 1.5 1.5)) (justify left)) (uuid "{u()}"))')
-body.append(f'	(text "Every connector shield ties to the board ground pour and stitching vias." (at 25.4 43.18 0) (effects (font (size 1.5 1.5)) (justify left)) (uuid "{u()}"))')
+    body.append(f'	(text "{desc}" (at {(x1 + x2) / 2} {Y + 3.81} 0) (effects (font (size 1.4 1.4))) (uuid "{u()}"))')
+body.append(f'	(text "SerDes Link test channel" (at 12.7 15.24 0) (effects (font (size 3 3) bold) (justify left)) (uuid "{u()}"))')
+body.append(f'	(text "J1-J3 and J2-J4 are the two halves of the differential channel,\\nmeasured as a 4-port in the order TX+, TX-, RX+, RX-." (at 12.7 22.86 0) (effects (font (size 1.4 1.4)) (justify left)) (uuid "{u()}"))')
+body.append(f'	(text "J5-J6 is the thru line, measured to remove the connector and launch\\nfrom the 12 in results. Every shield ties to the ground pour and stitching vias." (at 12.7 30.48 0) (effects (font (size 1.4 1.4)) (justify left)) (uuid "{u()}"))')
 sch = f'''(kicad_sch
 	(version 20250114)
 	(generator "eeschema")
 	(generator_version "10.0")
 	(uuid "{ROOT}")
-	(paper "A4")
+	(paper "User" 160 180)
 	(title_block (title "SerDes Link test channel") (date "2026-11-11") (rev "A") (comment 1 "Two 12 in 50 ohm microstrip lines and a 1 in thru, edge-launch SMA") (comment 2 "Jack Pham"))
 	(lib_symbols
 {block}
